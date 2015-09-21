@@ -148,7 +148,7 @@ public class Renderer // Renderer3D
 	
 	/** Draws 2D rectangle. If textures are enabled, then draws textured rect*/
 	public static void rect(double x, double y, double w, double h)
-	{ rect(x, y, w, h, 0F, 0F, 1F, 1F); }
+	{ rect(x, y, w, h, 0D, 0D, 1D, 1D); }
 	
 	public static void rect(double x, double y, double w, double h, double tx, double ty, double tw, double th)
 	{
