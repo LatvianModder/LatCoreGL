@@ -1,5 +1,6 @@
 package latmod.core.gui;
 
+import latmod.core.LatCoreGL;
 import latmod.core.input.LMMouse;
 import latmod.core.input.mouse.*;
 import latmod.core.rendering.*;
@@ -20,7 +21,7 @@ public abstract class Button extends Widget implements IMousePressed
 	public void onRender()
 	{
 		Renderer.disableTexture();
-		LMColorUtils.setGLColor(mouseOver() ? LMColorUtils.lerp(color, 0xFF000000, 0.5F) : color);
+		LatCoreGL.setColor(mouseOver() ? LMColorUtils.lerp(color, 0xFF000000, 0.5F) : color);
 		Renderer.rect(posX, posY, width, height);
 	}
 	

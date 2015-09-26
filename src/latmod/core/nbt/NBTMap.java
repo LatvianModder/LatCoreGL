@@ -13,7 +13,7 @@ public class NBTMap extends NBTBase implements INBTParent
 	{
 		map.clear();
 		if(dios.available() < 2) return;
-		int size = dios.readShort();
+		int size = dios.readUShort();
 		if(size <= 0) return;
 
 		for(int i = 0; i < size; i++)
@@ -35,7 +35,7 @@ public class NBTMap extends NBTBase implements INBTParent
 	{
 		int s = size();
 		
-		dios.writeShort(s);
+		dios.writeUShort(s);
 		
 		if(s > 0)
 		{

@@ -6,7 +6,7 @@ import org.lwjgl.*;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
-import latmod.core.*;
+import latmod.core.LatCoreGL;
 import latmod.core.util.*;
 
 /** Made by LatvianModder */
@@ -95,7 +95,7 @@ public class Renderer // Renderer3D
 	public static void scale(double s)
 	{ scale(s, s); }
 	
-	public static void scale(Vertex v, double s)
+	public static void scale(VecLM v, double s)
 	{ scale(v.x * s, v.y * s); }
 	
 	public static void vertex(double x, double y, double z)
@@ -122,7 +122,7 @@ public class Renderer // Renderer3D
 	public static void translate(double x, double y)
 	{ GL11.glTranslated(x, y, 0D); }
 	
-	public static void translate(Vertex v, double scale)
+	public static void translate(VecLM v, double scale)
 	{ translate(v.x * scale, v.y * scale); }
 	
 	/** - */
@@ -290,9 +290,9 @@ public class Renderer // Renderer3D
 		if(detail < 2D) return;
 		
 		begin(GL11.GL_TRIANGLE_FAN);
-		LMColorUtils.setGLColor(innerCol);
+		LatCoreGL.setColor(innerCol);
 		vertex(x, y);
-		LMColorUtils.setGLColor(outterCol);
+		LatCoreGL.setColor(outterCol);
 		double step = 360F / detail;
 		for(double i = 0F; i <= 360F; i += step)
 		vertex(x + MathHelperLM.sin(i * MathHelperLM.RAD) * r, y + MathHelperLM.cos(i * MathHelperLM.RAD) * r);

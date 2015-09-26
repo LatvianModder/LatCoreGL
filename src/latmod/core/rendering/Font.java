@@ -1,7 +1,6 @@
 package latmod.core.rendering;
 import org.lwjgl.opengl.GL11;
 
-import latmod.core.MathHelperLM;
 import latmod.core.res.Resource;
 import latmod.core.util.*;
 
@@ -13,7 +12,7 @@ public class Font
 	public final Texture texture;
 	public final double[] charWidth = new double[256];
 	private boolean drawAtributes = true;
-	private double masterAlpha = 1D;
+	private float masterAlpha = 1F;
 	private double masterScale = 1D;
 	private double shadowSize = 0D;
 	private double fontSize = 16D;
@@ -71,7 +70,7 @@ public class Font
 	public void reset()
 	{
 		drawAtributes = true;
-		masterAlpha = 1D;
+		masterAlpha = 1F;
 		masterScale = 1D;
 		shadowSize = 0D;
 		fontSize = 16D;
@@ -89,8 +88,8 @@ public class Font
 	public void setDrawAtributes(boolean b)
 	{ drawAtributes = b; }
 	
-	public void setAlpha(double a)
-	{ masterAlpha = MathHelperLM.clamp(a, 0D, 2D); }
+	public void setAlpha(float a)
+	{ masterAlpha = MathHelperLM.clampFloat(a, 0F, 2F); }
 	
 	public void setMasterScale(double d)
 	{ masterScale = Math.max(d, 0D); }
@@ -132,9 +131,11 @@ public class Font
 			TextPart p = parts.get(i);
 			
 			int col = p.getColor().color;
-			double a = masterAlpha * (LMColorUtils.getAlpha(col) / 255D);
-			
-			LMColorUtils.setGLColor(col, (int)(a * 255D));
+			float red = LMColorUtils.getRed(col) / 255F;
+			float green = LMColorUtils.getRed(col) / 255F;
+			float blue = LMColorUtils.getRed(col) / 255F;
+			float alpha = masterAlpha * (LMColorUtils.getAlpha(col) / 255F);
+			GL11.glColor4f(red, green, blue, alpha);
 			
 			boolean bold = drawAtributes && p.isBold();
 			//boolean italic = drawAtributes && p.isItalic();

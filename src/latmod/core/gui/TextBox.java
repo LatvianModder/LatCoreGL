@@ -4,6 +4,7 @@ import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import latmod.core.LatCoreGL;
 import latmod.core.input.LMKeyboard;
 import latmod.core.input.keys.*;
 import latmod.core.input.mouse.*;
@@ -43,7 +44,7 @@ public class TextBox extends Widget implements IMousePressed, IKeyPressed
 		if(mouseOver()) col = LMColorUtils.lerp(col, 0xFFFFFFFF, 0.3D);
 		if(selected) col = LMColorUtils.lerp(col, 0xFFFFFFFF, 0.5D);
 		
-		LMColorUtils.setGLColor(col);
+		LatCoreGL.setColor(col);
 		Renderer.rect(posX, posY, width, height);
 	}
 	

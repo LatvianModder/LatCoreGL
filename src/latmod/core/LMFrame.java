@@ -82,7 +82,7 @@ public class LMFrame implements IInputEvents, Runnable
 	{
 		ByteBuffer[] list = new ByteBuffer[iconPaths.length];
 		for(int i = 0; i < iconPaths.length; i++)
-		list[i] = textureManager.getTexture(Resource.getTexture(iconPaths[i])).pixels.toByteBuffer(true);
+		list[i] = LatCoreGL.toByteBuffer(textureManager.getTexture(Resource.getTexture(iconPaths[i])).pixels.pixels, true);
 		Display.setIcon(list);
 	}
 	

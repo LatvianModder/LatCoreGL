@@ -25,7 +25,7 @@ public class NBTList extends NBTBase implements INBTParent
 	{
 		list.clear();
 
-		int size = dios.readShort();
+		int size = dios.readUShort();
 
 		if(size > 0)
 		{
@@ -44,7 +44,7 @@ public class NBTList extends NBTBase implements INBTParent
 	{
 		int s = size();
 		
-		dios.writeShort(s);
+		dios.writeUShort(s);
 
 		if(s > 0)
 		{

@@ -10,7 +10,7 @@ public class NBTDoubleArray extends NBTBase
 
 	public void read(DataIOStream dios) throws Exception
 	{
-		int s = dios.readShort();
+		int s = dios.readUShort();
 		data = new double[s];
 		for(int i = 0; i < s; i++)
 		data[i] = dios.readDouble();
@@ -18,7 +18,7 @@ public class NBTDoubleArray extends NBTBase
 
 	public void write(DataIOStream dios) throws Exception
 	{
-		dios.writeShort(data.length);
+		dios.writeUShort(data.length);
 		for(int i = 0; i < data.length; i++)
 		dios.writeDouble(data[i]);
 	}

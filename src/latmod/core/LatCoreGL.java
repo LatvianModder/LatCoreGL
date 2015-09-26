@@ -1,11 +1,11 @@
 package latmod.core;
 import java.io.*;
 import java.net.*;
-import java.nio.FloatBuffer;
+import java.nio.*;
 import java.util.logging.*;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.*;
 
 import latmod.core.gui.Widget;
 import latmod.core.input.*;
@@ -144,6 +144,36 @@ public final class LatCoreGL
 			return new String(b).trim();
 		}
 		catch(Exception e) { } return null;
+	}
+	
+	public static void setColor(int c, int a)
+	{
+		if(c >= 0 && c <= 255)
+			GL11.glColor4f(c / 255F, c / 255F, c / 255F, a / 255F);
+		else
+			GL11.glColor4f(LMColorUtils.getRed(c) / 255F, LMColorUtils.getGreen(c) / 255F, LMColorUtils.getBlue(c) / 255F, a / 255F);
+	}
+	
+	public static void setColor(int c)
+	{ setColor(c, LMColorUtils.getAlpha(c)); }
+	
+	public static ByteBuffer toByteBuffer(int pixels[], boolean alpha)
+	{
+		ByteBuffer b = BufferUtils.createByteBuffer(pixels.length * 4);
+		
+		byte a = (byte)255;
+		
+		for(int i = 0; i < pixels.length; i++)
+		{
+			int c = pixels[i];
+			b.put((byte)LMColorUtils.getRed(c));
+			b.put((byte)LMColorUtils.getGreen(c));
+			b.put((byte)LMColorUtils.getBlue(c));
+			b.put(alpha ? (byte)LMColorUtils.getAlpha(c) : a);
+		}
+		
+		b.flip();
+		return b;
 	}
 
 	// End of class //

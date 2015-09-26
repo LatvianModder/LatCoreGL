@@ -9,10 +9,10 @@ public class NBTByteArray extends NBTBase
 	{ super(NBTID.BYTE_ARRAY); data = p; }
 	
 	public void read(DataIOStream dios) throws Exception
-	{ data = dios.readBytes(); }
+	{ data = dios.readByteArray(); }
 	
 	public void write(DataIOStream dios) throws Exception
-	{ dios.writeBytes(data); }
+	{ dios.writeByteArray(data); }
 	
 	public Object getData()
 	{ return data; }

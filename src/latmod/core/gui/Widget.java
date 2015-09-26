@@ -4,7 +4,6 @@ import latmod.core.*;
 import latmod.core.input.*;
 import latmod.core.rendering.*;
 import latmod.core.res.Resource;
-import latmod.core.util.LMColorUtils;
 
 /** Made by LatvianModder */
 public class Widget extends Box2D implements IInputEvents
@@ -50,7 +49,7 @@ public class Widget extends Box2D implements IInputEvents
 	public void onRender()
 	{
 		Renderer.disableTexture();
-		LMColorUtils.setGLColor(0, 50);
+		LatCoreGL.setColor(0, 50);
 		Renderer.rect(posX, posY, width, height);
 	}
 	

@@ -3,9 +3,9 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.*;
 
-import latmod.core.PixelBuffer;
+import latmod.core.LatCoreGL;
 import latmod.core.res.Resource;
-import latmod.core.util.LMUtils;
+import latmod.core.util.*;
 
 /** Made by LatvianModder */
 public class Texture
@@ -38,7 +38,7 @@ public class Texture
 	
 	public final void update()
 	{
-		ByteBuffer buffer = pixels.toByteBuffer(true);
+		ByteBuffer buffer = LatCoreGL.toByteBuffer(pixels.pixels, true);
 		Renderer.bind(textureID);
 		int i = blured ? GL11.GL_LINEAR : GL11.GL_NEAREST;
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, i);

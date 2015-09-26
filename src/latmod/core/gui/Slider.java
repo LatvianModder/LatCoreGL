@@ -1,10 +1,10 @@
 package latmod.core.gui;
 
-import latmod.core.MathHelperLM;
+import latmod.core.LatCoreGL;
 import latmod.core.input.LMMouse;
 import latmod.core.input.mouse.*;
 import latmod.core.rendering.*;
-import latmod.core.util.LMColorUtils;
+import latmod.core.util.*;
 
 /** Made by LatvianModder */
 public class Slider extends Widget implements IMousePressed, IMouseReleased
@@ -40,12 +40,12 @@ public class Slider extends Widget implements IMousePressed, IMouseReleased
 		
 		Renderer.disableTexture();
 		
-		LMColorUtils.setGLColor(color);
+		LatCoreGL.setColor(color);
 		Renderer.rect(posX, posY, width, height);
 		double x = posX + normalValue * (width - 16D);
 		
 		//Renderer.colorize(Renderer.lerpColor(color, 0, 0.5F, 255), 255);
-		LMColorUtils.setGLColor(LMColorUtils.lerp(color, 0xFF000000, 0.5D, 255));
+		LatCoreGL.setColor(LMColorUtils.lerp(color, 0xFF000000, 0.5D, 255));
 		Renderer.rect(x, posY, 16D, height);
 		
 		if(!firstEvent)
