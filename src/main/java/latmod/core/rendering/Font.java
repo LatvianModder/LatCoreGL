@@ -1,5 +1,4 @@
 package latmod.core.rendering;
-import org.lwjgl.opengl.GL11;
 
 import latmod.core.res.Resource;
 import latmod.lib.*;
@@ -105,58 +104,99 @@ public class Font
 	
 	public double getFontSize()
 	{ return fontSize; }
-	
-	public void drawText(double x, double y, String s)
-	{ drawText(x, y, TextPart.get(s)); }
-	
-	public void drawText(double x, double y, TextPart txt)
+
+	public static String removeFormatting(String s)
 	{
-		if(txt == null || txt.length() == 0) return;
+		if(s == null || s.isEmpty()) return s;
+		StringBuilder sb = new StringBuilder();
+		boolean hadCode = false;
+		for(int i = 0; i < s.length(); i++)
+		{
+			if(hadCode)
+			{
+				hadCode = false;
+				continue;
+			}
+
+			char c = s.charAt(i);
+
+			if(c == TextColor.CHAR)
+			{
+				hadCode = true;
+				continue;
+			}
+
+			sb.append(c);
+		}
+		return sb.toString();
+	}
+
+	public void drawText(double x, double y, String s)
+	{
+		if(s == null || removeFormatting(s).isEmpty()) return;
 		
-		FastList<TextPart> parts = txt.toList();
+		GLHelper.color.setDefault();
 		
-		GL11.glColor4f(1F, 1F, 1F, 1F);
-		
-		Resource s2 = texManager.currentTexture;
-		texManager.setTexture(texture);
-		
-		Renderer.push();
-		Renderer.translate(x, y + (1D - masterScale) * 16D);
-		Renderer.scale(masterScale);
+		Texture s2 = texManager.currentTexture;
+		texture.bind();
+
+		GLHelper.push();
+		GLHelper.translate(x, y + (1D - masterScale) * 16D);
+		GLHelper.scale(masterScale);
 		double posX = 0D;
 		double cs = 1D / 16D;
-		
-		for(int i = 0; i < parts.size(); i++)
+
+		boolean hadCode = false;
+		boolean isBold = false;
+		boolean isItalic = false;
+		boolean hasUnderline = false;
+		int color = TextColor.WHITE.color;
+
+		for(int i = 0; i < s.length(); i++)
 		{
-			TextPart p = parts.get(i);
-			
-			int col = p.getColor().color;
-			float red = LMColorUtils.getRed(col) / 255F;
-			float green = LMColorUtils.getRed(col) / 255F;
-			float blue = LMColorUtils.getRed(col) / 255F;
-			float alpha = masterAlpha * (LMColorUtils.getAlpha(col) / 255F);
-			GL11.glColor4f(red, green, blue, alpha);
-			
-			boolean bold = drawAtributes && p.isBold();
+			char c = s.charAt(i);
+
+			if(hadCode)
+			{
+				hadCode = false;
+
+				if(drawAtributes)
+				{
+					if(c == TextColor.BOLD.code) isBold = !isBold;
+					else if(c == TextColor.ITALIC.code) isItalic = !isItalic;
+					else if(c == TextColor.UNDERLINE.code) hasUnderline = !hasUnderline;
+					else
+					{
+						TextColor tc = TextColor.getColor(c);
+						if(tc != null) color = tc.color;
+					}
+				}
+
+				continue;
+			}
+
+			if(c == TextColor.CHAR)
+			{
+				hadCode = true;
+				continue;
+			}
+
 			//boolean italic = drawAtributes && p.isItalic();
 			//boolean underline = drawAtributes && p.hasUnderline();
-			
-			for(int j = 0; j < p.text.length(); j++)
-			{
-				char c = p.text.charAt(j);
-				
-				double f = getCharWidth(c);
-				double x1 = ((int)(c % 16)) * cs;
-				double y1 = ((int)(c / 16)) * cs;
-				Renderer.rect(posX, 0D, fontSize, fontSize, x1, y1, cs, cs);
-				if(bold) Renderer.rect(posX + 1D, 1D, fontSize, fontSize, x1, y1, cs, cs);
-				posX += f;
-			}
+
+			GLHelper.color.setI(color, (int)(masterAlpha * 255F));
+
+			double f = getCharWidth(c);
+			double x1 = ((int)(c % 16)) * cs;
+			double y1 = ((int)(c / 16)) * cs;
+			Renderer.rect(posX, 0D, fontSize, fontSize, x1, y1, cs, cs);
+			if(isBold) Renderer.rect(posX + 1D, 1D, fontSize, fontSize, x1, y1, cs, cs);
+			posX += f;
 		}
 		
-		if(s2 != null) texManager.setTexture(s2);
-		Renderer.pop();
-		GL11.glColor4f(1F, 1F, 1F, 1F);
+		if(s2 != null) s2.bind();
+		GLHelper.pop();
+		GLHelper.color.setDefault();
 	}
 	
 	public double getCharWidth(int c)
@@ -193,9 +233,17 @@ public class Font
 	
 	public String limitToWidth(String s, double w)
 	{
-		String s1 = "";
+		StringBuilder sb = new StringBuilder();
+		double pw = 0;
+
 		for(int i = 0; i < s.length(); i++)
-		if(textWidth(s1 + "" + s.charAt(i)) <= w)
-		s1 += s.charAt(i); return s1;
+		{
+			char c = s.charAt(i);
+			pw += getCharWidth(c);
+			if(pw >= w) return sb.toString();
+			else sb.append(c);
+		}
+
+		return sb.toString();
 	}
 }

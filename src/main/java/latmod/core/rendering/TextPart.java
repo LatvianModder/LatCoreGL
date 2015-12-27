@@ -3,6 +3,8 @@ package latmod.core.rendering;
 import latmod.core.nbt.NBTMap;
 import latmod.lib.FastList;
 
+import java.util.List;
+
 public class TextPart
 {
 	public static final TextPart defaultParentTextPart = new TextPart()
@@ -99,18 +101,46 @@ public class TextPart
 	
 	public String toString()
 	{ return parent.toString() + text; }
+
+	public String toFormattedString()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append(parent.toFormattedString());
+		if(getColor() != parent.getColor())
+		{
+			sb.append(TextColor.CHAR);
+			sb.append(getColor().code);
+		}
+		if(isBold() != parent.isBold())
+		{
+			sb.append(TextColor.CHAR);
+			sb.append(TextColor.BOLD.code);
+		}
+		if(isItalic() != parent.isItalic())
+		{
+			sb.append(TextColor.CHAR);
+			sb.append(TextColor.ITALIC.code);
+		}
+		if(hasUnderline() != parent.hasUnderline())
+		{
+			sb.append(TextColor.CHAR);
+			sb.append(TextColor.UNDERLINE.code);
+		}
+		sb.append(text);
+		return sb.toString();
+	}
 	
 	public int length()
-	{ return text.length() + parent.length(); }
-	
-	public FastList<TextPart> toList()
+	{ return parent.length() + text.length(); }
+
+	public List<TextPart> toList()
 	{
-		FastList<TextPart> l = new FastList<TextPart>();
+		FastList<TextPart> l = new FastList<>();
 		addToList(l);
 		return l;
 	}
 	
-	private void addToList(FastList<TextPart> l)
+	private void addToList(List<TextPart> l)
 	{ if(this != defaultParentTextPart) parent.addToList(l); l.add(this); }
 	
 	// Static //

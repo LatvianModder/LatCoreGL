@@ -1,8 +1,9 @@
 package latmod.core;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 
 import latmod.lib.*;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 /** Made by LatvianModder */
 public class EventGroup

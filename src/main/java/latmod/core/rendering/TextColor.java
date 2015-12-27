@@ -22,8 +22,13 @@ public enum TextColor
 	YELLOW('e', 14),
 	WHITE('f', 15),
 	BOLD('o'),
-	CUSTOM_COL('i');
-	
+	ITALIC('i'),
+	UNDERLINE('u');
+
+	public static final TextColor[] VALUES = values();
+	public static final TextColor[] COLORS = new TextColor[16];
+	static { System.arraycopy(VALUES, 0, COLORS, 0, 16); }
+
 	public static final char CHAR = '\u00a7';//Font //LatCore
 	
 	public char code;
@@ -35,7 +40,7 @@ public enum TextColor
 	{
 		code = c;
 		isColor = false;
-		txt = CHAR + "" + code;
+		txt = "\u00a7" + code;
 		
 		if(col >= 0)
 		{
@@ -52,12 +57,11 @@ public enum TextColor
 
 	public static TextColor getColor(char c1)
 	{
-		TextColor[] t = values();
-		for(int i = 0; i < t.length; i++)
-		if(t[i].code == c1) return t[i];
+		for(int i = 0; i < VALUES.length; i++)
+			if(VALUES[i].code == c1) return VALUES[i];
 		return null;
 	}
-	
+
 	public TextPart colored(TextPart s)
 	{ return s.setColor(this); }
 }

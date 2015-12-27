@@ -1,10 +1,9 @@
 package latmod.core.input;
 
-import org.lwjgl.input.Keyboard;
-
 import latmod.core.LatCoreGL;
 import latmod.core.input.keys.*;
 import latmod.lib.*;
+import org.lwjgl.input.Keyboard;
 
 public class LMKeyboard
 {

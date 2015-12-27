@@ -1,7 +1,7 @@
 package latmod.core.sound;
-import org.lwjgl.openal.AL10;
 
 import latmod.core.res.Resource;
+import org.lwjgl.openal.AL10;
 
 /** Made by LatvianModder */
 public class SoundContainer

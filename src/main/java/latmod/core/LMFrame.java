@@ -33,10 +33,10 @@ public class LMFrame implements IInputEvents, Runnable
 		mainArgs = new MainArgs(args);
 		inputHandler = new InputHandler();
 		LatCoreGL.mainFrame = this;
+
+		width = mainArgs.getI("width", w, 200, Short.MAX_VALUE);
+		height = mainArgs.getI("height", h, 150, Short.MAX_VALUE);
         
-		width = mainArgs.getI("-width", w, 0, 16000);
-		height = mainArgs.getI("-height", h, 0, 9000);
-		
 		DisplayMode d = Display.getDesktopDisplayMode();
 		screenWidth = d.getWidth();
 		screenHeight = d.getHeight();
@@ -50,26 +50,23 @@ public class LMFrame implements IInputEvents, Runnable
 	
 	public void onLoaded() throws Exception
 	{
-		width = mainArgs.getI("width", width, 200, Short.MAX_VALUE);
-		height = mainArgs.getI("height", height, 150, Short.MAX_VALUE);
-		
 		Display.setDisplayMode(new DisplayMode(width, height));
 		setTitle("LMFrame");
 		Display.setResizable(isResizable());
 		Display.create();
 		Renderer.init(width, height);
 		Renderer.enter2D();
-		Renderer.enableTexture();
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		Renderer.enableAlphaBlending();
-		
+
+		GLHelper.blending.enable();
+		GLHelper.blendFunc.setDefault();
+
 		resManager = new StreamResManager();
 		soundManager = new SoundManager(resManager);
 		textureManager = new TextureManager(resManager);
 		
 		lastFPS = Time.millis();
 		
-		Renderer.enableTexture();
+		GLHelper.texture.enable();
 		setIcon("gui/logo_16.png", "gui/logo_32.png", "gui/logo_128.png");
 		
 		font = new Font(textureManager, Resource.getTexture("font.png"));
@@ -119,10 +116,10 @@ public class LMFrame implements IInputEvents, Runnable
 				onUpdate();
 				
 				if(Display.wasResized()) onResized();
-				
-				Renderer.clear();
-				Renderer.background(LMColorUtils.DARK_GRAY);
-				GL11.glColor4f(1F, 1F, 1F, 1F);
+
+				GLHelper.clear();
+				GLHelper.background.setI(LMColorUtils.DARK_GRAY);
+				GLHelper.color.setDefault();
 				
 				onRender();
 				textureManager.updateCustomTextures();

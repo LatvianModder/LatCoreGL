@@ -1,16 +1,15 @@
 package latmod.core;
-import java.io.*;
-import java.net.*;
-import java.nio.*;
-import java.util.logging.*;
-
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.*;
 
 import latmod.core.gui.Widget;
 import latmod.core.input.*;
 import latmod.core.res.FileResManager;
 import latmod.lib.*;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.Display;
+
+import java.io.File;
+import java.nio.*;
+import java.util.logging.*;
 
 /** Made by LatvianModder */
 public final class LatCoreGL
@@ -24,7 +23,7 @@ public final class LatCoreGL
 	public static FileResManager projectResManager = null;
 	
 	public static boolean enableLogging = true;
-	private static FastList<String> log = new FastList<String>();
+	private static final FastList<String> log = new FastList<>();
 	
 	public static void initLogger()
 	{
@@ -40,17 +39,25 @@ public final class LatCoreGL
 					
 					sb.append('[');
 					sb.append(Time.get().getTimeString());
-					sb.append("][");
+					sb.append(']');
+					sb.append('[');
 					sb.append(record.getLoggerName());
 					sb.append("]: ");
 					sb.append(record.getMessage());
 					
-					String s = sb.toString();
-					
 					if(record.getLevel().intValue() <= Level.INFO.intValue())
-					System.out.println(s); else System.err.println(s);
+					System.out.println(sb.toString()); else System.err.println(sb.toString());
 					
-					if(enableLogging) log.add("[" + record.getLevel() + "][" + s);
+					if(enableLogging)
+					{
+						StringBuilder sb1 = new StringBuilder();
+						sb1.append('[');
+						sb1.append(record.getLevel());
+						sb1.append(']');
+						sb1.append('[');
+						sb1.append(sb);
+						log.add(sb1.toString());
+					}
 				}
 
 				public void flush()
@@ -126,36 +133,6 @@ public final class LatCoreGL
 		projectResManager = new FileResManager(f);
 		logger.info("Set project directory to " + f.getAbsolutePath());
 	}
-	
-	public static String getHostAddress()
-	{
-		try { return InetAddress.getLocalHost().getHostAddress(); }
-		catch(Exception e) { } return null;
-	}
-	
-	public static String getExternalAddress()
-	{
-		try
-		{
-			URL url = new URL("http://checkip.amazonaws.com");
-			InputStream is = url.openStream();
-			byte[] b = new byte[is.available()];
-			is.read(b);
-			return new String(b).trim();
-		}
-		catch(Exception e) { } return null;
-	}
-	
-	public static void setColor(int c, int a)
-	{
-		if(c >= 0 && c <= 255)
-			GL11.glColor4f(c / 255F, c / 255F, c / 255F, a / 255F);
-		else
-			GL11.glColor4f(LMColorUtils.getRed(c) / 255F, LMColorUtils.getGreen(c) / 255F, LMColorUtils.getBlue(c) / 255F, a / 255F);
-	}
-	
-	public static void setColor(int c)
-	{ setColor(c, LMColorUtils.getAlpha(c)); }
 	
 	public static ByteBuffer toByteBuffer(int pixels[], boolean alpha)
 	{

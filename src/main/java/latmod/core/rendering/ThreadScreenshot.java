@@ -1,13 +1,12 @@
 package latmod.core.rendering;
+
+import latmod.core.*;
+import org.lwjgl.opengl.Display;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
-
-import javax.imageio.ImageIO;
-
-import org.lwjgl.opengl.Display;
-
-import latmod.core.*;
 
 /** Made by LatvianModder */
 public final class ThreadScreenshot extends Thread

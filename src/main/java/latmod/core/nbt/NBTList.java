@@ -1,7 +1,8 @@
 package latmod.core.nbt;
-import java.util.*;
 
 import latmod.lib.*;
+
+import java.util.*;
 
 /** Made by LatvianModder */
 public class NBTList extends NBTBase implements INBTParent

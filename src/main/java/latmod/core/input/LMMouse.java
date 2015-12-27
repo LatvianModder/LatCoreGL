@@ -1,11 +1,10 @@
 package latmod.core.input;
 
-import org.lwjgl.input.Mouse;
-
 import latmod.core.LatCoreGL;
 import latmod.core.input.mouse.*;
 import latmod.lib.LMUtils;
 import latmod.lib.util.Box2D;
+import org.lwjgl.input.Mouse;
 
 public class LMMouse
 {

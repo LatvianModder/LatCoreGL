@@ -1,6 +1,5 @@
 package latmod.core.gui;
 
-import latmod.core.LatCoreGL;
 import latmod.core.input.LMMouse;
 import latmod.core.input.mouse.*;
 import latmod.core.rendering.*;
@@ -14,22 +13,22 @@ public abstract class Button extends Widget implements IMousePressed
 	public Button(Gui s, double x, double y, double w, double h, String s1)
 	{
 		super(s, x, y, w, h);
-		txt = TextPart.get(s1);
+		txt = s1;
 		color = LMColorUtils.WIDGETS;
 	}
 	
 	public void onRender()
 	{
-		Renderer.disableTexture();
-		LatCoreGL.setColor(mouseOver() ? LMColorUtils.lerp(color, 0xFF000000, 0.5F) : color);
+		GLHelper.texture.disable();
+		GLHelper.color.setI(mouseOver() ? LMColorUtils.lerp(color, 0xFF000000, 0.5F) : color);
 		Renderer.rect(posX, posY, width, height);
 	}
 	
 	public void onPostRender()
 	{
-		Renderer.enableTexture();
-		
-		TextPart s = getText();
+		GLHelper.texture.enable();
+
+		String s = getText();
 		if(s != null && s.length() > 0)
 		{
 			double x = 0; if(leftAlign) x = posX + 8F;
@@ -38,7 +37,7 @@ public abstract class Button extends Widget implements IMousePressed
 		}
 	}
 	
-	public TextPart getText()
+	public String getText()
 	{ return txt; }
 
 	public void onMousePressed(EventMousePressed e)

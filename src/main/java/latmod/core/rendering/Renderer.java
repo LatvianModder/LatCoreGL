@@ -1,14 +1,13 @@
 package latmod.core.rendering;
-import java.nio.ByteBuffer;
-import java.util.logging.Logger;
 
+import latmod.core.LatCoreGL;
+import latmod.lib.MathHelperLM;
 import org.lwjgl.*;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
-import latmod.core.LatCoreGL;
-import latmod.lib.*;
-import latmod.lib.util.VecLM;
+import java.nio.ByteBuffer;
+import java.util.logging.Logger;
 
 /** Made by LatvianModder */
 public class Renderer // Renderer3D
@@ -22,27 +21,8 @@ public class Renderer // Renderer3D
 	}
 	
 	private static int startWidth, startHeight;
-	private static boolean textureEnabled;
-	
-	public static final int FILLED = GL11.GL_FILL;
-	public static final int POINTS = GL11.GL_POINT;
-	public static final int LINES = GL11.GL_LINE;
+	public static int drawingLevel = 0;
 
-	/** Clears screen and prepares screen for rendering
-	 * <br>(must to be called before all rendering) */
-	public static void clear()
-	{ GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); }
-	
-	public static void background(float r, float g, float b)
-	{ GL11.glClearColor(r, g, b, 1F); }
-	
-	/** Sets background color (also clears screen) */
-	public static void background(int c)
-	{
-		if(c >= 0 && c <= 255) background(c / 255F, c / 255F, c / 255F); else
-		background(LMColorUtils.getRed(c) / 255F, LMColorUtils.getGreen(c) / 255F, LMColorUtils.getBlue(c) / 255F);
-	}
-	
 	public static void init(int w, int h)
 	{
 		startWidth = w;
@@ -63,76 +43,27 @@ public class Renderer // Renderer3D
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		
-		//FIXME
-		//Renderer3D.disableDepth();
-		//Renderer3D.disableCulling();
-		//Renderer3D.disable3DAlpha();
-		GL11.glColor4f(1F, 1F, 1F, 1F);
-		currentTexture = -1;
+		GLHelper.depth.disable();
+		GLHelper.cullFace.disable();
+		GLHelper.alphaTest.enable();
+		drawingLevel = 0;
+		GLHelper.color.setF(1F, 1F, 1F, 1F);
+		GLHelper.bound_texture.set(0);
 	}
-	
-	public static void normal(double x, double y, double z)
-	{ GL11.glNormal3d(x, y, z); }
-	
-	/** Pushes matrix */
-	public static void push()
-	{ GL11.glPushMatrix(); }
-	
-	/** Pushes enable bit */
-	public static void pushEnableAttrib()
-	{ GL11.glPushAttrib(GL11.GL_ENABLE_BIT); }
-	
-	/** Pops matrix */
-	public static void pop()
-	{ GL11.glPopMatrix(); }
-	
-	/** Pops attrib */
-	public static void popAttrib()
-	{ GL11.glPopAttrib(); }
-	
-	public static void scale(double x, double y)
-	{ GL11.glScaled(x, y, 1D); }
-	
-	public static void scale(double s)
-	{ scale(s, s); }
-	
-	public static void scale(VecLM v, double s)
-	{ scale(v.x * s, v.y * s); }
-	
+
 	public static void vertex(double x, double y, double z)
 	{ GL11.glVertex3d(x, y, z); }
-	
+
 	public static void vertex(double x, double y)
 	{ GL11.glVertex2d(x, y); }
 	
-	public static void rotate(double x, double y, double z)
-	{ rotateY(y); rotateX(x); rotateZ(z); }
-	
-	public static void rotate(double yaw, double pitch)
-	{ rotateY(yaw); rotateY(pitch); }
-	
-	public static void rotateX(double f)
-	{ GL11.glRotated(f, 1D, 0D, 0D); }
-	
-	public static void rotateY(double f)
-	{ GL11.glRotated(f, 0D, 1D, 0D); }
-	
-	public static void rotateZ(double f)
-	{ GL11.glRotated(f, 0D, 0D, 1D); }
-	
-	public static void translate(double x, double y)
-	{ GL11.glTranslated(x, y, 0D); }
-	
-	public static void translate(VecLM v, double scale)
-	{ translate(v.x * scale, v.y * scale); }
-	
 	/** - */
 	public static void end()
-	{ GL11.glEnd(); }//drawingLevel--; }
+	{ GL11.glEnd(); drawingLevel--; }
 	
 	/** - */
 	public static void begin(int i)
-	{ GL11.glBegin(i); }//drawingLevel++; }
+	{ GL11.glBegin(i); drawingLevel++; }
 	
 	/** - */
 	public static void beginQuads()
@@ -155,7 +86,7 @@ public class Renderer // Renderer3D
 	{
 		beginQuads();
 		
-		if(textureEnabled)
+		if(GLHelper.texture.enabled)
 		{
 			vertexWithUV(x, y, tx, ty);
 			vertexWithUV(x + w, y, tx + tw, ty);
@@ -194,18 +125,6 @@ public class Renderer // Renderer3D
 	public static void takeScreenshot()
 	{ new ThreadScreenshot().start(); }
 	
-	private static int currentTexture = -1;
-	
-	/** Sets current texture id for GL */
-	public static void bind(int i)
-	{
-		if(currentTexture == -1 || currentTexture != i)
-		{
-			currentTexture = i;
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, i);
-		}
-	}
-	
 	public static void textureVertex(double x, double y)
 	{ GL11.glTexCoord2d(x, y); }
 	
@@ -217,43 +136,6 @@ public class Renderer // Renderer3D
 	
 	public static void vertexWithUV(double x, double y, double z, double tx, double ty)
 	{ textureVertex(tx, ty); vertex(x, y, z); }
-	
-	/** Disables textures */
-	public static void disableTexture()
-	{ GL11.glDisable(GL11.GL_TEXTURE_2D);
-	textureEnabled = false; }
-	
-	/** Enables textures */
-	public static void enableTexture()
-	{ GL11.glEnable(GL11.GL_TEXTURE_2D);
-	textureEnabled = true; }
-	
-	public static boolean textureEnabled()
-	{ return textureEnabled; }
-	
-	public static void enableAlphaBlending()
-	{ GL11.glEnable(GL11.GL_BLEND); }
-	
-	public static void enableSmooth()
-	{
-		GL11.glEnable(GL11.GL_LINE_SMOOTH);
-		GL11.glEnable(GL11.GL_POINT_SMOOTH);
-		GL11.glEnable(GL11.GL_POLYGON_SMOOTH);
-	}
-	
-	public static void disableSmooth()
-	{
-		GL11.glDisable(GL11.GL_LINE_SMOOTH);
-		GL11.glDisable(GL11.GL_POINT_SMOOTH);
-		GL11.glDisable(GL11.GL_POLYGON_SMOOTH);
-	}
-	
-	public static boolean isEnabled(int i)
-	{ return GL11.glIsEnabled(i); }
-	
-	/** Sets line width */
-	public static void lineWidth(float f)
-	{ GL11.glLineWidth(f); GL11.glPointSize(f); }
 
 	public static int getStartHeight()
 	{ return startHeight; }
@@ -264,14 +146,11 @@ public class Renderer // Renderer3D
 	/** Draws rectangle only from lines */
 	public static void linedRect(double x, double y, double w, double h)
 	{
-		polyMode(LINES);
+		GLHelper.polyMode.set(GLHelper.LINES);
 		rect(x, y, w, h);
-		polyMode(FILLED);
+		GLHelper.polyMode.set(GLHelper.FILLED);
 	}
-	
-	public static void polyMode(int m)
-	{ GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, m); }
-	
+
 	/** Draws circle with diameter 'd' */
 	public static void drawPoly(double x, double y, double r, double detail)
 	{
@@ -291,9 +170,9 @@ public class Renderer // Renderer3D
 		if(detail < 2D) return;
 		
 		begin(GL11.GL_TRIANGLE_FAN);
-		LatCoreGL.setColor(innerCol);
+		GLHelper.color.setI(innerCol);
 		vertex(x, y);
-		LatCoreGL.setColor(outterCol);
+		GLHelper.color.setI(outterCol);
 		double step = 360F / detail;
 		for(double i = 0F; i <= 360F; i += step)
 		vertex(x + MathHelperLM.sin(i * MathHelperLM.RAD) * r, y + MathHelperLM.cos(i * MathHelperLM.RAD) * r);

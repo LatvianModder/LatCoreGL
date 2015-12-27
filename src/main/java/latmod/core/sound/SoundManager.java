@@ -1,13 +1,13 @@
 package latmod.core.sound;
-import java.io.InputStream;
-import java.util.logging.Logger;
-
-import org.lwjgl.openal.*;
-import org.lwjgl.util.WaveData;
 
 import latmod.core.LatCoreGL;
 import latmod.core.res.*;
 import latmod.lib.*;
+import org.lwjgl.openal.*;
+import org.lwjgl.util.WaveData;
+
+import java.io.InputStream;
+import java.util.logging.Logger;
 
 /** Made by LatvianModder */
 public final class SoundManager implements Runnable

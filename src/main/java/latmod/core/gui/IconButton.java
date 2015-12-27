@@ -1,5 +1,4 @@
 package latmod.core.gui;
-import org.lwjgl.opengl.GL11;
 
 import latmod.core.input.LMMouse;
 import latmod.core.rendering.*;
@@ -8,7 +7,7 @@ import latmod.core.res.Resource;
 /** Made by LatvianModder */
 public abstract class IconButton extends Button
 {
-	public Resource icon = null;
+	public Texture icon = null;
 	public boolean smoothTexture = false;
 	public String iconName = null;
 	
@@ -16,17 +15,16 @@ public abstract class IconButton extends Button
 	{
 		super(s, x, y, w, h, s1);
 		iconName = s1;
-		icon = Resource.getTexture(iconName + ".png");
+		icon = s.texManager.getTexture(Resource.getTexture(iconName + ".png"));
 	}
 	
 	public void onRender()
 	{
 		super.onRender();
-		
-		Renderer.enableTexture();
-		
-		GL11.glColor4f(1F, 1F, 1F, 1F);
-		TextureManager.instance.setTexture(icon);
+
+		GLHelper.texture.enable();
+		GLHelper.color.setDefault();
+		icon.bind();
 		Renderer.rect(posX, posY, width, height);
 	}
 	
@@ -34,7 +32,7 @@ public abstract class IconButton extends Button
 	{
 		if(mouseOver())
 		{
-			Renderer.enableTexture();
+			GLHelper.texture.enable();
 			gui.parent.font.drawText(LMMouse.x + 8D, LMMouse.y - 16D, getText());
 		}
 	}

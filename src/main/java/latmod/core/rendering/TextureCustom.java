@@ -1,8 +1,9 @@
 package latmod.core.rendering;
-import java.util.Random;
 
 import latmod.core.res.Resource;
 import latmod.lib.PixelBuffer;
+
+import java.util.Random;
 
 /** Made by LatvianModder */
 public class TextureCustom extends Texture

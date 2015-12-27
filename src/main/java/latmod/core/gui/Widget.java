@@ -19,7 +19,7 @@ public class Widget extends Box2D implements IInputEvents
 	public final Gui gui;
 	public int widgetID = 0;
 	
-	public TextPart txt = null;
+	public String txt = null;
 	public boolean selected = false;
 	public int color = 0xFFFFFFFF;
 	
@@ -44,13 +44,13 @@ public class Widget extends Box2D implements IInputEvents
 	public final int hashCode()
 	{ return widgetID; }
 	
-	public Widget setText(TextPart t)
+	public Widget setText(String t)
 	{ txt = t; return this; }
 	
 	public void onRender()
 	{
-		Renderer.disableTexture();
-		LatCoreGL.setColor(0, 50);
+		GLHelper.texture.disable();
+		GLHelper.color.setI(0, 0, 0, 50);
 		Renderer.rect(posX, posY, width, height);
 	}
 	
@@ -61,7 +61,7 @@ public class Widget extends Box2D implements IInputEvents
 	public boolean mouseOver()
 	{ return LMMouse.isOver(this); }
 	
-	public void textCentred(double x, double y, TextPart s)
+	public void textCentred(double x, double y, String s)
 	{ gui.parent.font.drawText(x - gui.parent.font.textWidth(s) / 2D, y - 8D, s); }
 	
 	public Widget setColor(int c)

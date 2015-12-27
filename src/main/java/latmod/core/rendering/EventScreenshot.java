@@ -1,8 +1,9 @@
 package latmod.core.rendering;
-import java.awt.image.BufferedImage;
-import java.io.File;
 
 import latmod.core.*;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 /** Made by LatvianModder */
 public class EventScreenshot extends Event

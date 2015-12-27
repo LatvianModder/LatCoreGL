@@ -1,7 +1,6 @@
 package latmod.core;
 
 import com.google.gson.JsonObject;
-
 import latmod.lib.*;
 
 public class MainArgs

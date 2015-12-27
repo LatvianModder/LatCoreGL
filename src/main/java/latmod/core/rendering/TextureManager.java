@@ -1,15 +1,14 @@
 package latmod.core.rendering;
-import java.awt.image.BufferedImage;
-import java.util.Random;
-import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
-
-import org.lwjgl.opengl.GL11;
 
 import latmod.core.*;
 import latmod.core.res.*;
 import latmod.lib.*;
+import org.lwjgl.opengl.GL11;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.util.Random;
+import java.util.logging.Logger;
 
 public class TextureManager
 {
@@ -22,15 +21,18 @@ public class TextureManager
 	public final FastMap<Resource, Texture> textureMap;
 	public final FastList<TextureCustom> updateableCustomTextures;
 	public boolean loadTexturesBlured = false;
-	public Resource currentTexture = null;
+	public Texture currentTexture = null;
 	private static PixelBuffer unknownTexture = createUnknownTexture();
 	public long animTick = 0;
-	
+	private final Texture nullTexture;
+
 	public TextureManager(ResourceManager rm)
 	{
 		resManager = rm;
-		textureMap = new FastMap<Resource, Texture>();
-		updateableCustomTextures = new FastList<TextureCustom>();
+		textureMap = new FastMap<>();
+		updateableCustomTextures = new FastList<>();
+		nullTexture = new Texture(this, Resource.NULL, createUnknownTexture());
+		nullTexture.textureID = 0;
 	}
 	
 	private static PixelBuffer createUnknownTexture()
@@ -45,7 +47,7 @@ public class TextureManager
 		});
 		return pixels;
 	}
-	
+
 	private Texture getTextureFromList(Resource r)
 	{
 		if(r == null || textureMap.isEmpty())
@@ -58,42 +60,22 @@ public class TextureManager
 		Texture t1 = getTextureFromList(r);
 		if(t1 != null) return t1;
 		Texture t = setupTexture(r, loadImage(r));
-		if(t == null) return null;
-		return t;
+		return (t == null) ? nullTexture : t;
 	}
-	
-	public void setTexture(Resource r)
-	{ setTexture(getTexture(r)); }
-	
-	public void setTexture(Texture t)
-	{
-		if(t == null || t.textureID == 0)
-		{
-			currentTexture = null;
-			Renderer.bind(0);
-		}
-		else
-		{
-			currentTexture = t.res;
-			Renderer.bind(t.textureID);
-		}
-	}
-	
+
 	/** Sends an update for all custom textures<br>
 	 * (They won't be able to move without calling this
 	 * <br> method before drawing them) */
 	public void updateCustomTextures()
 	{
-		Renderer.enableTexture();
-		
+		GLHelper.texture.enable();
+
 		for(int i = 0; i < updateableCustomTextures.size(); i++)
 		{
 			TextureCustom tc = updateableCustomTextures.get(i);
 			tc.onUpdate();
 			tc.tick++;
 			tc.update();
-			
-			updateableCustomTextures.set(i, tc);
 		}
 		
 		animTick++;
@@ -102,8 +84,8 @@ public class TextureManager
 	private Texture setupTexture(Resource r, PixelBuffer image)
 	{
 		if(r == null) return null;
-		
-		Renderer.enableTexture();
+
+		GLHelper.texture.enable();
 		
 		boolean failed = false;
 		if(image == null) failed = true;
@@ -112,7 +94,7 @@ public class TextureManager
 		t.textureID = GL11.glGenTextures();
 		t.blured = loadTexturesBlured;
 		t.update();
-		Renderer.bind(0);
+		GLHelper.bound_texture.set(0);
 		
 		logger.info("Added texture " + r.path + " with id " + t.textureID + (failed ? " (Unknown)" : ""));
 		
@@ -136,8 +118,8 @@ public class TextureManager
 		tc.rand = new Random(tc.textureID);
 		tc.onLoaded();
 		tc.update();
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-		
+		GLHelper.bound_texture.set(0);
+
 		if(tc.res != null)
 		{ if(tc.updatePixels)
 		updateableCustomTextures.add(tc);

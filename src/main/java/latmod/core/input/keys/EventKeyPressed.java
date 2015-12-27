@@ -1,8 +1,7 @@
 package latmod.core.input.keys;
 
-import org.lwjgl.input.Keyboard;
-
 import latmod.lib.LMStringUtils;
+import org.lwjgl.input.Keyboard;
 
 public class EventKeyPressed extends EventKey
 {

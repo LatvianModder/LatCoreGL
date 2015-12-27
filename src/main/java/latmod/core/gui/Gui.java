@@ -1,7 +1,5 @@
 package latmod.core.gui;
 
-import org.lwjgl.opengl.GL11;
-
 import latmod.core.*;
 import latmod.core.input.*;
 import latmod.core.rendering.*;
@@ -18,7 +16,7 @@ public abstract class Gui implements IInputEvents
 	public Gui(LMFrame i)
 	{
 		parent = i;
-		widgets = new FastList<Widget>();
+		widgets = new FastList<>();
 		handler = new InputHandler();
 		texManager = parent.textureManager;
 	}
@@ -60,16 +58,16 @@ public abstract class Gui implements IInputEvents
 	
 	public void onRender()
 	{
-		GL11.glColor4f(1F, 1F, 1F, 1F);
+		GLHelper.color.setDefault();
 		
 		for(int i = 0; i < widgets.size(); i++)
 			widgets.get(i).onRender();
 		
 		for(int i = 0; i < widgets.size(); i++)
 			widgets.get(i).onPostRender();
-		
-		Renderer.enableTexture();
-		GL11.glColor4f(1F, 1F, 1F, 1F);
+
+		GLHelper.texture.enable();
+		GLHelper.color.setDefault();
 	}
 	
 	public Widget getWidgetAt(Widget w0, float x, float y)
