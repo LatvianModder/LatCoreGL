@@ -46,8 +46,10 @@ public class Renderer // Renderer3D
 		GLHelper.depth.disable();
 		GLHelper.cullFace.disable();
 		GLHelper.alphaTest.enable();
+		GLHelper.fog.disable();
+
 		drawingLevel = 0;
-		GLHelper.color.setF(1F, 1F, 1F, 1F);
+		GLHelper.color.setDefault();
 		GLHelper.bound_texture.set(0);
 	}
 
@@ -85,7 +87,7 @@ public class Renderer // Renderer3D
 	public static void rect(double x, double y, double w, double h, double tx, double ty, double tw, double th)
 	{
 		beginQuads();
-		
+
 		if(GLHelper.texture.enabled)
 		{
 			vertexWithUV(x, y, tx, ty);
@@ -100,7 +102,7 @@ public class Renderer // Renderer3D
 			vertex(x + w, y + h);
 			vertex(x, y + h);
 		}
-		
+
 		end();
 	}
 	

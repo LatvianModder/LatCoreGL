@@ -3,7 +3,7 @@ package latmod.core.rendering;
 import latmod.core.LatCoreGL;
 import latmod.core.res.Resource;
 import latmod.lib.*;
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;
 
@@ -43,12 +43,10 @@ public class Texture
 	{
 		ByteBuffer buffer = LatCoreGL.toByteBuffer(pixels.pixels, true);
 		bind();
-		int i = blured ? GL11.GL_LINEAR : GL11.GL_NEAREST;
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, i);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, i);
-		i = clamp ? GL12.GL_CLAMP_TO_EDGE : GL11.GL_REPEAT;
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, i);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, i);
+		GLHelper.blured_texture.set(blured);
+		GLHelper.blured_texture.onSet();
+		GLHelper.warp_texture.set(!clamp);
+		GLHelper.warp_texture.onSet();
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, pixels.width, pixels.height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 	}
 	

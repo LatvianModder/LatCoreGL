@@ -2,7 +2,7 @@ package latmod.core.rendering;
 
 import latmod.lib.*;
 import latmod.lib.util.VecLM;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.*;
 
 /**
  * Created by LatvianModder on 27.12.2015.
@@ -15,13 +15,16 @@ public class GLHelper extends Renderer
 
 	public static abstract class Capability
 	{
-		protected abstract void onSet();
+		public abstract void onSet();
 		public void setDefault() { }
+		public void push() { }
+		public void pop() { }
 	}
 
 	public static abstract class CapabilityBool extends Capability
 	{
 		public boolean enabled;
+		private boolean enabled0;
 
 		public void set(boolean i)
 		{
@@ -37,6 +40,12 @@ public class GLHelper extends Renderer
 
 		public void setDefault()
 		{ set(false); }
+
+		public void push()
+		{ enabled0 = enabled; }
+
+		public void pop()
+		{ set(enabled0); }
 	}
 
 	public static class CapabilityGL extends CapabilityBool
@@ -46,7 +55,7 @@ public class GLHelper extends Renderer
 		public CapabilityGL(int cap)
 		{ id = cap; }
 
-		protected void onSet()
+		public void onSet()
 		{
 			if(enabled) GL11.glEnable(id);
 			else GL11.glDisable(id);
@@ -56,6 +65,7 @@ public class GLHelper extends Renderer
 	public static abstract class CapabilityInt extends Capability
 	{
 		public int value;
+		private int value0;
 
 		public void set(int i)
 		{
@@ -65,12 +75,20 @@ public class GLHelper extends Renderer
 
 		public void setDefault()
 		{ set(0); }
+
+		public void push()
+		{ value0 = value; }
+
+		public void pop()
+		{ set(value0); }
 	}
 
 	public static abstract class CapabilityInt2 extends Capability
 	{
 		public int value1;
 		public int value2;
+		private int value01;
+		private int value02;
 
 		public void set(int i, int j)
 		{
@@ -80,11 +98,18 @@ public class GLHelper extends Renderer
 
 		public void setDefault()
 		{ set(0, 0); }
+
+		public void push()
+		{ value01 = value1; value02 = value2; }
+
+		public void pop()
+		{ set(value01, value02); }
 	}
 
 	public static abstract class CapabilityFloat extends Capability
 	{
 		public float value;
+		private float value0;
 
 		public void set(float i)
 		{
@@ -94,11 +119,18 @@ public class GLHelper extends Renderer
 
 		public void setDefault()
 		{ set(0F); }
+
+		public void push()
+		{ value0 = value; }
+
+		public void pop()
+		{ set(value0); }
 	}
 
 	public static abstract class Color extends Capability
 	{
 		public float red = 1F, green = 1F, blue = 1F, alpha = 1F;
+		private float red0 = 1F, green0 = 1F, blue0 = 1F, alpha0 = 1F;
 
 		public int hashCode()
 		{ return LMColorUtils.getRGBAF(red, green, blue, alpha); }
@@ -131,18 +163,24 @@ public class GLHelper extends Renderer
 
 		public void setDefault()
 		{ setF(1F, 1F, 1F, 1F); }
+
+		public void push()
+		{ red0 = red; green0 = green; blue0 = blue; alpha0 = alpha; }
+
+		public void pop()
+		{ setF(red0, green0, blue0, alpha0); }
 	}
 
 	public static final Color color = new Color()
 	{
-		protected void onSet()
+		public void onSet()
 		{ GL11.glColor4f(red, green, blue, alpha); }
 	};
 
 	/** Sets background color (also clears screen) */
 	public static final Color background = new Color()
 	{
-		protected void onSet()
+		public void onSet()
 		{ GL11.glClearColor(red, green, blue, 1F); }
 	};
 
@@ -155,13 +193,13 @@ public class GLHelper extends Renderer
 
 	public static final CapabilityInt polyMode = new CapabilityInt()
 	{
-		protected void onSet()
+		public void onSet()
 		{ GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, value); }
 	};
 
 	public static final CapabilityBool smooth = new CapabilityBool()
 	{
-		protected void onSet()
+		public void onSet()
 		{
 			if(enabled)
 			{
@@ -180,31 +218,63 @@ public class GLHelper extends Renderer
 
 	public static final CapabilityBool depthMask = new CapabilityBool()
 	{
-		protected void onSet()
+		public void onSet()
 		{ GL11.glDepthMask(enabled); }
 	};
 
 	/** Sets line width */
 	public static final CapabilityFloat lineWidth = new CapabilityFloat()
 	{
-		protected void onSet()
+		public void onSet()
 		{ GL11.glLineWidth(value); GL11.glPointSize(value); }
+
+		public void setDefault()
+		{ set(1F); }
 	};
 
 	/** Sets current texture id for GL */
 	public static final CapabilityInt bound_texture = new CapabilityInt()
 	{
-		protected void onSet()
+		public void onSet()
 		{ GL11.glBindTexture(GL11.GL_TEXTURE_2D, value); }
+
+		public void setDefault()
+		{ set(0); }
 	};
 
 	public static final CapabilityInt2 blendFunc = new CapabilityInt2()
 	{
-		protected void onSet()
+		public void onSet()
 		{ GL11.glBlendFunc(value1, value2); }
 
 		public void setDefault()
 		{ set(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA); }
+	};
+
+	public static final CapabilityBool warp_texture = new CapabilityBool()
+	{
+		public void onSet()
+		{
+			int i = enabled ? GL11.GL_REPEAT : GL12.GL_CLAMP_TO_EDGE;
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, i);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, i);
+		}
+
+		public void setDefault()
+		{ set(true); }
+	};
+
+	public static final CapabilityBool blured_texture = new CapabilityBool()
+	{
+		public void onSet()
+		{
+			int i = enabled ? GL11.GL_LINEAR : GL11.GL_NEAREST;
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, i);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, i);
+		}
+
+		public void setDefault()
+		{ set(false); }
 	};
 
 	/** Clears screen and prepares screen for rendering
@@ -231,14 +301,11 @@ public class GLHelper extends Renderer
 	public static void popAttrib()
 	{ GL11.glPopAttrib(); }
 
-	public static void scale(double x, double y)
+	public static void scale(double x, double y, double z)
 	{ GL11.glScaled(x, y, 1D); }
 
 	public static void scale(double s)
-	{ scale(s, s); }
-
-	public static void scale(VecLM v, double s)
-	{ scale(v.x * s, v.y * s); }
+	{ scale(s, s, s); }
 
 	public static void rotate(double x, double y, double z)
 	{ rotateY(y); rotateX(x); rotateZ(z); }
