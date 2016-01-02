@@ -4,17 +4,19 @@ import latmod.core.*;
 import latmod.core.input.*;
 import latmod.core.rendering.*;
 import latmod.lib.FastList;
+import latmod.lib.util.FinalIDObject;
 
 /** Made by LatvianModder */
-public abstract class Gui implements IInputEvents
+public abstract class Gui extends FinalIDObject implements IInputEvents
 {
 	public final LMFrame parent;
 	public final FastList<Widget> widgets;
 	public final InputHandler handler;
 	public final TextureManager texManager;
 	
-	public Gui(LMFrame i)
+	public Gui(LMFrame i, String id)
 	{
+		super(id);
 		parent = i;
 		widgets = new FastList<>();
 		handler = new InputHandler();
