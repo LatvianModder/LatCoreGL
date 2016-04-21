@@ -1,6 +1,4 @@
-package latmod.core.input.keys;
-
-import latmod.core.input.EventInput;
+package latmod.core.input;
 
 public abstract class EventKey extends EventInput
 {

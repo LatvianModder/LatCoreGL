@@ -1,10 +1,12 @@
 package latmod.core.rendering;
 
-import latmod.core.res.Resource;
+import latmod.core.Resource;
 import latmod.lib.*;
 
-/** <b>Made by LatvianModder</b> <br>
-Character length code taken from Minecraft:FontRenderer*/
+/**
+ * <b>Made by LatvianModder</b> <br>
+ * Character length code taken from Minecraft:FontRenderer
+ */
 public class Font
 {
 	public final TextureManager texManager;
@@ -27,10 +29,10 @@ public class Font
 		int j = texture.pixels.height;
 		int k = i / 16;
 		int l = j / 16;
-		double f = (double)i / 128F;
+		double f = (double) i / 128F;
 		int ai[] = texture.pixels.pixels;
-
-		for (int i1 = 0; i1 < 256; i1++)
+		
+		for(int i1 = 0; i1 < 256; i1++)
 		{
 			int j1 = i1 % 16;
 			int l1 = i1 / 16;
@@ -38,25 +40,25 @@ public class Font
 			
 			while(true)
 			{
-				if (j2 < 0) break;
+				if(j2 < 0) break;
 				
 				int l2 = j1 * k + j2;
 				boolean flag1 = true;
 				
-				for (int k3 = 0; k3 < l && flag1; k3++)
+				for(int k3 = 0; k3 < l && flag1; k3++)
 				{
 					int i4 = (l1 * l + k3) * i;
 					int i5 = LMColorUtils.getAlpha(ai[l2 + i4]);// & 0xFF;
 					
-					if (i5 > 16) flag1 = false;
+					if(i5 > 16) flag1 = false;
 				}
 				
-				if (!flag1) break;
+				if(!flag1) break;
 				
 				j2--;
 			}
-			if (i1 == 32) j2 = (int)(1.5D * (double)f);
-			charWidth[i1] = ((double)(j2 + 1) / f + 1F) * 2F;
+			if(i1 == 32) j2 = (int) (1.5D * f);
+			charWidth[i1] = ((double) (j2 + 1) / f + 1F) * 2F;
 		}
 	}
 	
@@ -104,7 +106,7 @@ public class Font
 	
 	public double getFontSize()
 	{ return fontSize; }
-
+	
 	public static String removeFormatting(String s)
 	{
 		if(s == null || s.isEmpty()) return s;
@@ -117,20 +119,20 @@ public class Font
 				hadCode = false;
 				continue;
 			}
-
+			
 			char c = s.charAt(i);
-
+			
 			if(c == TextColor.CHAR)
 			{
 				hadCode = true;
 				continue;
 			}
-
+			
 			sb.append(c);
 		}
 		return sb.toString();
 	}
-
+	
 	public void drawText(double x, double y, String s)
 	{
 		if(s == null || removeFormatting(s).isEmpty()) return;
@@ -139,27 +141,27 @@ public class Font
 		
 		Texture s2 = texManager.currentTexture;
 		texture.bind();
-
+		
 		GLHelper.push();
 		GLHelper.translate(x, y + (1D - masterScale) * 16D);
 		GLHelper.scale(masterScale);
 		double posX = 0D;
 		double cs = 1D / 16D;
-
+		
 		boolean hadCode = false;
 		boolean isBold = false;
 		boolean isItalic = false;
 		boolean hasUnderline = false;
 		int color = TextColor.WHITE.color;
-
+		
 		for(int i = 0; i < s.length(); i++)
 		{
 			char c = s.charAt(i);
-
+			
 			if(hadCode)
 			{
 				hadCode = false;
-
+				
 				if(drawAtributes)
 				{
 					if(c == TextColor.BOLD.code) isBold = !isBold;
@@ -171,24 +173,24 @@ public class Font
 						if(tc != null) color = tc.color;
 					}
 				}
-
+				
 				continue;
 			}
-
+			
 			if(c == TextColor.CHAR)
 			{
 				hadCode = true;
 				continue;
 			}
-
+			
 			//boolean italic = drawAtributes && p.isItalic();
 			//boolean underline = drawAtributes && p.hasUnderline();
-
-			GLHelper.color.setI(color, (int)(masterAlpha * 255F));
-
+			
+			GLHelper.color.setI(color, (int) (masterAlpha * 255F));
+			
 			double f = getCharWidth(c);
-			double x1 = ((int)(c % 16)) * cs;
-			double y1 = ((int)(c / 16)) * cs;
+			double x1 = c % 16 * cs;
+			double y1 = c / 16 * cs;
 			Renderer.rect(posX, 0D, fontSize, fontSize, x1, y1, cs, cs);
 			if(isBold) Renderer.rect(posX + 1D, 1D, fontSize, fontSize, x1, y1, cs, cs);
 			posX += f;
@@ -203,7 +205,8 @@ public class Font
 	{
 		if(hasSqSpacing()) return fontSize;
 		if(c >= charWidth.length) return 16D;
-		if(c <= 0) return 0D; return charWidth[c];
+		if(c <= 0) return 0D;
+		return charWidth[c];
 	}
 	
 	public double textWidth(TextPart txt)
@@ -226,16 +229,20 @@ public class Font
 	
 	public double longestTextWidth(TextPart... s)
 	{
-		double f = 0F; for(int i = 0; i < s.length; i++)
-		{ double f1 = textWidth(s[i]);
-		if(f1 > f) f = f1; } return f;
+		double f = 0F;
+		for(int i = 0; i < s.length; i++)
+		{
+			double f1 = textWidth(s[i]);
+			if(f1 > f) f = f1;
+		}
+		return f;
 	}
 	
 	public String limitToWidth(String s, double w)
 	{
 		StringBuilder sb = new StringBuilder();
 		double pw = 0;
-
+		
 		for(int i = 0; i < s.length(); i++)
 		{
 			char c = s.charAt(i);
@@ -243,7 +250,7 @@ public class Font
 			if(pw >= w) return sb.toString();
 			else sb.append(c);
 		}
-
+		
 		return sb.toString();
 	}
 }

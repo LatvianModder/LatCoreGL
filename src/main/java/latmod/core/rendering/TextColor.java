@@ -2,7 +2,9 @@ package latmod.core.rendering;
 
 import latmod.lib.LMColorUtils;
 
-/** Made by LatvianModder */
+/**
+ * Made by LatvianModder
+ */
 public enum TextColor
 {
 	BLACK('0', 0),
@@ -24,11 +26,12 @@ public enum TextColor
 	BOLD('o'),
 	ITALIC('i'),
 	UNDERLINE('u');
-
+	
 	public static final TextColor[] VALUES = values();
 	public static final TextColor[] COLORS = new TextColor[16];
+	
 	static { System.arraycopy(VALUES, 0, COLORS, 0, 16); }
-
+	
 	public static final char CHAR = '\u00a7';//Font //LatCore
 	
 	public char code;
@@ -54,14 +57,14 @@ public enum TextColor
 	
 	public String toString()
 	{ return txt; }
-
+	
 	public static TextColor getColor(char c1)
 	{
 		for(int i = 0; i < VALUES.length; i++)
 			if(VALUES[i].code == c1) return VALUES[i];
 		return null;
 	}
-
+	
 	public TextPart colored(TextPart s)
 	{ return s.setColor(this); }
 }

@@ -1,4 +1,5 @@
 package latmod.core.nbt;
+
 import latmod.lib.*;
 
 public class NBTIntArray extends NBTBase
@@ -6,11 +7,14 @@ public class NBTIntArray extends NBTBase
 	public int[] data;
 	
 	public NBTIntArray(int[] p)
-	{ super(NBTID.INT_ARRAY); data = p; }
-
+	{
+		super(NBTID.INT_ARRAY);
+		data = p;
+	}
+	
 	public void read(ByteIOStream dios)
 	{ data = dios.readIntArray(ARRAY_BYTE_COUNT); }
-
+	
 	public void write(ByteIOStream dios)
 	{ dios.writeIntArray(data, ARRAY_BYTE_COUNT); }
 	

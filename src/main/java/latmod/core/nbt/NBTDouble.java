@@ -7,11 +7,14 @@ public class NBTDouble extends NBTBase
 	public double data;
 	
 	public NBTDouble(double p)
-	{ super(NBTID.DOUBLE); data = p; }
-
+	{
+		super(NBTID.DOUBLE);
+		data = p;
+	}
+	
 	public void read(ByteIOStream dios)
 	{ data = dios.readDouble(); }
-
+	
 	public void write(ByteIOStream dios)
 	{ dios.writeDouble(data); }
 	

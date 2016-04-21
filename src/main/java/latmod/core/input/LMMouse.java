@@ -1,9 +1,7 @@
 package latmod.core.input;
 
 import latmod.core.LatCoreGL;
-import latmod.core.input.mouse.*;
 import latmod.lib.LMUtils;
-import latmod.lib.util.Box2D;
 import org.lwjgl.input.Mouse;
 
 public class LMMouse
@@ -18,11 +16,9 @@ public class LMMouse
 		Mouse.poll();
 		
 		x = Mouse.getX();
-		y = LatCoreGL.getHeight() - Mouse.getY() - 1;
+		y = LatCoreGL.window.getHeight() - Mouse.getY() - 1;
 		dx = Mouse.getDX();
 		dy = Mouse.getDY();
-		
-		if(dx != 0 || dy != 0) LatCoreGL.mainFrame.inputHandler.onMouseMoved(new EventMouseMoved());
 		
 		while(Mouse.next())
 		{
@@ -35,12 +31,12 @@ public class LMMouse
 				if(buttons[button])
 				{
 					delays[button] = LMUtils.millis();
-					LatCoreGL.mainFrame.inputHandler.onMousePressed(new EventMousePressed(button));
+					LatCoreGL.window.onMousePressed(new EventMousePressed(x, y, button));
 				}
 				else
 				{
 					long millis = LMUtils.millis() - delays[button];
-					LatCoreGL.mainFrame.inputHandler.onMouseReleased(new EventMouseReleased(button, millis));
+					LatCoreGL.window.onMouseReleased(new EventMouseReleased(x, y, button, millis));
 				}
 			}
 		}
@@ -50,7 +46,7 @@ public class LMMouse
 		if(dwheel != 0)
 		{
 			wheel += dwheel;
-			LatCoreGL.mainFrame.inputHandler.onMouseScrolled(new EventMouseScrolled());
+			LatCoreGL.window.onMouseScrolled(new EventMouseScrolled(x, y, dwheel < 0));
 		}
 	}
 	
@@ -59,7 +55,4 @@ public class LMMouse
 	
 	public static boolean isButtonDown(int i)
 	{ return i >= 0 && i <= buttons.length && buttons[i]; }
-	
-	public static boolean isOver(Box2D b)
-	{ return b.isAt(x, y); }
 }

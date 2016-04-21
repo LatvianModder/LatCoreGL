@@ -1,13 +1,14 @@
 package latmod.core.rendering;
 
-import latmod.core.LatCoreGL;
-import latmod.core.res.Resource;
+import latmod.core.*;
 import latmod.lib.*;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;
 
-/** Made by LatvianModder */
+/**
+ * Made by LatvianModder
+ */
 public class Texture
 {
 	public final TextureManager texManager;
@@ -33,11 +34,16 @@ public class Texture
 	{ return LMUtils.hashCode(textureID, pixels.hashCode()); }
 	
 	public boolean equals(Object o)
-	{ if(o == null || !(o instanceof Texture)) return false;
-	return o.hashCode() == hashCode(); }
-
+	{
+		if(o == null || !(o instanceof Texture)) return false;
+		return o.hashCode() == hashCode();
+	}
+	
 	public final void bind()
-	{ GLHelper.bound_texture.set(textureID); texManager.currentTexture = this; }
+	{
+		GLHelper.bound_texture.set(textureID);
+		texManager.currentTexture = this;
+	}
 	
 	public final void update()
 	{

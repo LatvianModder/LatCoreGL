@@ -1,52 +1,49 @@
 package latmod.core.gui;
 
-import latmod.core.input.LMMouse;
-import latmod.core.input.mouse.*;
+import latmod.core.input.EventMousePressed;
 import latmod.core.rendering.*;
 import latmod.lib.LMColorUtils;
 
-/** Made by LatvianModder */
-public abstract class Button extends Widget implements IMousePressed
+import java.util.List;
+
+/**
+ * Made by LatvianModder
+ */
+public abstract class Button extends Widget
 {
 	public boolean leftAlign = false;
+	public int color;
+	public String title;
 	
-	public Button(Gui s, double x, double y, double w, double h, String s1)
+	public Button(String id, double x, double y, double w, double h, String s1)
 	{
-		super(s, x, y, w, h);
-		txt = s1;
+		super(id, x, y, w, h);
+		title = s1;
 		color = LMColorUtils.WIDGETS;
 	}
 	
-	public void onRender()
+	public void renderWidget()
 	{
 		GLHelper.texture.disable();
 		GLHelper.color.setI(mouseOver() ? LMColorUtils.lerp(color, 0xFF000000, 0.5F) : color);
 		Renderer.rect(posX, posY, width, height);
 	}
 	
-	public void onPostRender()
+	public void getMouseOverText(List<String> list)
 	{
-		GLHelper.texture.enable();
-
-		String s = getText();
-		if(s != null && s.length() > 0)
+		if(title != null && !title.isEmpty())
 		{
-			double x = 0; if(leftAlign) x = posX + 8F;
-			else x = posX + (width - gui.parent.font.textWidth(s)) / 2F + 8F;
-			gui.parent.font.drawText(x, posY + height / 2F - 8F, s);
+			double x = leftAlign ? posX + 8D : posX + (width - getGui().font.textWidth(title)) / 2D + 8D;
+			getGui().font.drawText(x, posY + height / 2F - 8F, title);
 		}
 	}
 	
-	public String getText()
-	{ return txt; }
-
 	public void onMousePressed(EventMousePressed e)
 	{
-		if(LMMouse.isOver(this))
+		if(mouseOver())
 		{
 			playClickSound();
 			onPressed(e);
-			e.cancel();
 		}
 	}
 	

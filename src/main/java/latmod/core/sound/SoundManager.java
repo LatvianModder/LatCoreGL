@@ -1,33 +1,35 @@
 package latmod.core.sound;
 
-import latmod.core.LatCoreGL;
-import latmod.core.res.*;
-import latmod.lib.*;
+import latmod.core.*;
+import latmod.lib.net.Response;
 import org.lwjgl.openal.*;
 import org.lwjgl.util.WaveData;
 
-import java.io.InputStream;
+import java.util.*;
 import java.util.logging.Logger;
 
-/** Made by LatvianModder */
+/**
+ * Made by LatvianModder
+ */
 public final class SoundManager implements Runnable
 {
 	public static final Logger logger = Logger.getLogger("SoundManager");
+	
 	static { logger.setParent(LatCoreGL.logger); }
 	
-	public final ResourceManager resManager;
+	public final IWindow window;
 	private Thread thread;
 	public double masterVolume = 1D;
 	public boolean muted = false;
 	
-	private final FastMap<Resource, SoundContainer> soundContainers = new FastMap<Resource, SoundContainer>();
-	private final FastList<Sound> soundSources = new FastList<Sound>();
+	private final Map<Resource, SoundContainer> soundContainers = new HashMap<Resource, SoundContainer>();
+	private final List<Sound> soundSources = new ArrayList<Sound>();
 	
-	public SoundManager(ResourceManager rm)
+	public SoundManager(IWindow w)
 	{
 		thread = new Thread(this, "SoundManager");
 		thread.setDaemon(true);
-		resManager = rm;
+		window = w;
 		
 		logger.info("Starting OpenAL...");
 		
@@ -77,12 +79,14 @@ public final class SoundManager implements Runnable
 	{
 		try
 		{
-			InputStream is = resManager.getInputStream(r);
-			if(is == null) throw new RuntimeException("Sound '" + r.path + "' not found!");
-			else return addSound(r, WaveData.create(is));
+			Response is = window.getData(r);
+			if(is == null) throw new RuntimeException("Sound '" + r + "' not found!");
+			else return addSound(r, WaveData.create(is.stream));
 		}
 		catch(Exception e)
-		{ e.printStackTrace(); }
+		{
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
@@ -95,11 +99,16 @@ public final class SoundManager implements Runnable
 			AL10.alBufferData(bufferID, wd.format, wd.data, wd.samplerate);
 			wd.dispose();
 		}
-		catch(Exception e) { e.printStackTrace(); return null; }
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 		
-		logger.info("Adding new sound '" + r.path + "' with buffer ID " + bufferID);
+		logger.info("Adding new sound '" + r + "' with buffer ID " + bufferID);
 		SoundContainer sc = new SoundContainer(this, r, bufferID);
-		soundContainers.put(r, sc); return sc;
+		soundContainers.put(r, sc);
+		return sc;
 	}
 	
 	public void onDestroyed()
@@ -107,11 +116,15 @@ public final class SoundManager implements Runnable
 		thread = null;
 		logger.info("Stopping OpenAL...");
 		
-		for(SoundContainer c : soundContainers)
+		for(SoundContainer c : soundContainers.values())
 			AL10.alDeleteBuffers(c.bufferID);
+		
+		soundContainers.clear();
 		
 		for(Sound s : soundSources)
 			AL10.alDeleteSources(s.sourceID);
+		
+		soundSources.clear();
 		
 		AL.destroy();
 	}
@@ -140,10 +153,13 @@ public final class SoundManager implements Runnable
 	public SoundContainer getSoundContainer(Resource r)
 	{
 		SoundContainer sc = soundContainers.get(r);
-		if(sc == null) sc = addSound(r); return sc;
+		if(sc == null) sc = addSound(r);
+		return sc;
 	}
 	
-	/** Inverses muted boolean */
+	/**
+	 * Inverses muted boolean
+	 */
 	public void toggleMuted()
 	{ muted = !muted; }
 	

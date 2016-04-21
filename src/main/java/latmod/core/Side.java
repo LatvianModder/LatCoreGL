@@ -12,7 +12,11 @@ public enum Side
 	public boolean isClient;
 	
 	Side(String s, boolean server, boolean client)
-	{ name = s; isServer = server; isClient = client; }
+	{
+		name = s;
+		isServer = server;
+		isClient = client;
+	}
 	
 	public String toString()
 	{ return name; }

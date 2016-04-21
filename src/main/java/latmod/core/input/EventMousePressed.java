@@ -1,11 +1,12 @@
-package latmod.core.input.mouse;
+package latmod.core.input;
 
 public class EventMousePressed extends EventMouse
 {
 	public final int button;
 	
-	public EventMousePressed(int b)
+	public EventMousePressed(int px, int py, int b)
 	{
+		super(px, py);
 		button = b;
 	}
 	

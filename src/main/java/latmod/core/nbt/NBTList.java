@@ -1,31 +1,33 @@
 package latmod.core.nbt;
 
-import latmod.lib.*;
+import latmod.lib.ByteIOStream;
 
 import java.util.*;
 
-/** Made by LatvianModder */
+/**
+ * Made by LatvianModder
+ */
 public class NBTList extends NBTBase implements INBTParent
 {
-	public final FastList<NBTBase> list;
+	public final List<NBTBase> list;
 	public NBTID listID = NBTID.NONE;
 	
 	public NBTList()
 	{
 		super(NBTID.LIST);
-		list = new FastList<NBTBase>();
+		list = new ArrayList<>();
 	}
 	
 	public void read(ByteIOStream dios)
 	{
 		list.clear();
-
+		
 		int size = dios.readUnsignedShort();
-
+		
 		if(size > 0)
 		{
 			listID = NBTID.get(dios.readByte());
-
+			
 			for(int i = 0; i < size; i++)
 			{
 				NBTBase b = listID.newBaseFromID();
@@ -40,7 +42,7 @@ public class NBTList extends NBTBase implements INBTParent
 		int s = size();
 		
 		dios.writeShort(s);
-
+		
 		if(s > 0)
 		{
 			for(int i = 0; i < size(); i++)
@@ -76,7 +78,10 @@ public class NBTList extends NBTBase implements INBTParent
 	public void add(NBTBase b)
 	{
 		if(b != null && (size() == 0 || listID == NBTID.NONE || b.ID == listID))
-		{ listID = b.ID; list.add(b.init(null, this)); }
+		{
+			listID = b.ID;
+			list.add(b.init(null, this));
+		}
 	}
 	
 	public void addObj(Object o)
@@ -90,8 +95,10 @@ public class NBTList extends NBTBase implements INBTParent
 	
 	@SuppressWarnings("unchecked")
 	public <E> E getObj(int i)
-	{ NBTBase b = get(i);
-	return (b == null) ? null : (E)b.getData(); }
+	{
+		NBTBase b = get(i);
+		return (b == null) ? null : (E) b.getData();
+	}
 	
 	public void clear()
 	{ list.clear(); }
@@ -105,18 +112,18 @@ public class NBTList extends NBTBase implements INBTParent
 	private class NBTListIterator<E> implements Iterator<E>
 	{
 		public int pos = 0;
-
+		
 		public boolean hasNext()
 		{ return pos < list.size(); }
-
+		
 		@SuppressWarnings("unchecked")
 		public E next()
 		{
 			Object o = getObj(pos);
 			pos++;
-			return (E)o;
+			return (E) o;
 		}
-
+		
 		public void remove() { }
 	}
 	
@@ -128,8 +135,11 @@ public class NBTList extends NBTBase implements INBTParent
 		return list1;
 	}
 	
-	public boolean equals(Object o) { if(o == null) return false;
-	return (o instanceof NBTList) && ((NBTList)o).list.equals(list); }
+	public boolean equals(Object o)
+	{
+		if(o == null) return false;
+		return (o instanceof NBTList) && ((NBTList) o).list.equals(list);
+	}
 	
 	public Collection<NBTBase> getChildren()
 	{ return list; }

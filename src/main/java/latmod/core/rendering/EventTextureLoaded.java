@@ -1,4 +1,5 @@
 package latmod.core.rendering;
+
 import latmod.core.Event;
 
 public class EventTextureLoaded extends Event

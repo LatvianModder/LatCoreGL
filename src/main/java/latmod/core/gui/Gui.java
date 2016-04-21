@@ -1,85 +1,67 @@
 package latmod.core.gui;
 
-import latmod.core.*;
-import latmod.core.input.*;
+import latmod.core.LatCoreGL;
 import latmod.core.rendering.*;
-import latmod.lib.FastList;
 import latmod.lib.util.FinalIDObject;
 
-/** Made by LatvianModder */
-public abstract class Gui extends FinalIDObject implements IInputEvents
+/**
+ * Made by LatvianModder
+ */
+public abstract class Gui extends FinalIDObject
 {
-	public final LMFrame parent;
-	public final FastList<Widget> widgets;
-	public final InputHandler handler;
-	public final TextureManager texManager;
+	public final Panel mainPanel;
+	public Font font;
+	private boolean isDirty = true;
 	
-	public Gui(LMFrame i, String id)
+	public Gui(String id)
 	{
 		super(id);
-		parent = i;
-		widgets = new FastList<>();
-		handler = new InputHandler();
-		texManager = parent.textureManager;
+		
+		mainPanel = new Panel(id, 0, 0, 0, 0)
+		{
+			public void loadWidgets()
+			{
+				Gui.this.loadWidgets();
+			}
+		};
+	}
+	
+	public final void markDirty()
+	{ isDirty = true; }
+	
+	public boolean grabMouse()
+	{ return false; }
+	
+	public void init()
+	{
+		mainPanel.width = LatCoreGL.window.getWidth();
+		mainPanel.height = LatCoreGL.window.getHeight();
+		font = LatCoreGL.window.getFont();
 	}
 	
 	public abstract void loadWidgets();
 	
-	public final void onLoaded()
-	{
-		widgets.clear();
-		
-		LatCoreGL.mainFrame.inputHandler.add(this);
-		LatCoreGL.mainFrame.inputHandler.add(handler);
-		
-		loadWidgets();
-	}
-	
-	public final void onUnloaded()
-	{
-		widgets.clear();
-		handler.clear();
-		
-		LatCoreGL.mainFrame.inputHandler.remove(this);
-		LatCoreGL.mainFrame.inputHandler.remove(handler);
-	}
-	
-	public void onDestroyed()
+	public void onClosed()
 	{
 	}
 	
-	public void addWidget(Widget w)
+	public final void renderGui()
 	{
-		if(w != null)
+		if(isDirty)
 		{
-			w.widgetID = widgets.size();
-			widgets.add(w);
-			handler.add(w);
+			mainPanel.widgets.clear();
+			mainPanel.loadWidgets();
+			isDirty = false;
 		}
+		
+		onRender();
 	}
 	
 	public void onRender()
 	{
 		GLHelper.color.setDefault();
-		
-		for(int i = 0; i < widgets.size(); i++)
-			widgets.get(i).onRender();
-		
-		for(int i = 0; i < widgets.size(); i++)
-			widgets.get(i).onPostRender();
-
+		mainPanel.renderWidget();
 		GLHelper.texture.enable();
 		GLHelper.color.setDefault();
-	}
-	
-	public Widget getWidgetAt(Widget w0, float x, float y)
-	{
-		for(int i = 0; i < widgets.size(); i++)
-		{
-			Widget w = widgets.get(i);
-			if((w0 == null || (w0 != null && w.widgetID != w0.widgetID)) && w.isAt(x, y)) return w;
-		}
-		
-		return null;
 	}
 }

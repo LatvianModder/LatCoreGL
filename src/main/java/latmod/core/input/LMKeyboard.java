@@ -1,8 +1,7 @@
 package latmod.core.input;
 
 import latmod.core.LatCoreGL;
-import latmod.core.input.keys.*;
-import latmod.lib.*;
+import latmod.lib.LMUtils;
 import org.lwjgl.input.Keyboard;
 
 public class LMKeyboard
@@ -22,13 +21,13 @@ public class LMKeyboard
 			if(keys[key])
 			{
 				char keyChar = Keyboard.getEventCharacter();
-				LatCoreGL.mainFrame.inputHandler.onKeyPressed(new EventKeyPressed(key, keyChar));
+				LatCoreGL.window.onKeyPressed(new EventKeyPressed(key, keyChar));
 				delays[key] = LMUtils.millis();
 			}
 			else
 			{
 				long millis = LMUtils.millis() - delays[key];
-				LatCoreGL.mainFrame.inputHandler.onKeyReleased(new EventKeyReleased(key, millis));
+				LatCoreGL.window.onKeyReleased(new EventKeyReleased(key, millis));
 			}
 		}
 	}
@@ -36,14 +35,6 @@ public class LMKeyboard
 	public static void destroy()
 	{
 		Keyboard.destroy();
-	}
-	
-	public static IntList getKeysPressed()
-	{
-		IntList l = new IntList();
-		for(int i = 0; i < keys.length; i++)
-			if(keys[i]) l.add(i);
-		return l;
 	}
 	
 	public static boolean isKeyDown(int k)

@@ -1,22 +1,28 @@
 package latmod.core.nbt;
-import latmod.lib.*;
+
+import latmod.lib.ByteIOStream;
 
 import java.util.*;
 
-/** Made by LatvianModder */
+/**
+ * Made by LatvianModder
+ */
 public class NBTMap extends NBTBase implements INBTParent
 {
-	public FastMap<String, NBTBase> map = new FastMap<String, NBTBase>();
+	public final Map<String, NBTBase> map;
 	
 	public NBTMap()
-	{ super(NBTID.MAP); }
+	{
+		super(NBTID.MAP);
+		map = new HashMap<>();
+	}
 	
 	public void read(ByteIOStream dios)
 	{
 		map.clear();
 		int size = dios.readUnsignedShort();
 		if(size <= 0) return;
-
+		
 		for(int i = 0; i < size; i++)
 		{
 			byte typeID = dios.readByte();
@@ -53,7 +59,7 @@ public class NBTMap extends NBTBase implements INBTParent
 	public int getByteCount()
 	{
 		int bcount = 2;
-
+		
 		for(Map.Entry<String, NBTBase> e : map.entrySet())
 		{
 			bcount += 1;
@@ -71,8 +77,10 @@ public class NBTMap extends NBTBase implements INBTParent
 	
 	@SuppressWarnings("unchecked")
 	protected <E> E getObject(String s)
-	{ NBTBase b = map.get(s);
-	return (b == null) ? null : (E)b.getData(); }
+	{
+		NBTBase b = map.get(s);
+		return (b == null) ? null : (E) b.getData();
+	}
 	
 	public String getString(String s)
 	{ return getObject(s); }
@@ -81,36 +89,52 @@ public class NBTMap extends NBTBase implements INBTParent
 	{ return getByte(s) == 1; }
 	
 	public int getByte(String s)
-	{ Byte p = getObject(s);
-	return (p == null) ? -1 : p.byteValue(); }
+	{
+		Byte p = getObject(s);
+		return (p == null) ? -1 : p.byteValue();
+	}
 	
 	public int getShort(String s)
-	{ Short p = getObject(s);
-	return (p == null) ? -1 : p.shortValue(); }
+	{
+		Short p = getObject(s);
+		return (p == null) ? -1 : p.shortValue();
+	}
 	
 	public int getInt(String s)
-	{ Integer p = getObject(s);
-	return (p == null) ? -1 : p.intValue(); }
+	{
+		Integer p = getObject(s);
+		return (p == null) ? -1 : p.intValue();
+	}
 	
 	public long getLong(String s)
-	{ Long p = getObject(s);
-	return (p == null) ? -1 : p.longValue(); }
+	{
+		Long p = getObject(s);
+		return (p == null) ? -1 : p.longValue();
+	}
 	
 	public float getFloat(String s)
-	{ Float p = getObject(s);
-	return (p == null) ? -1F : p.floatValue(); }
+	{
+		Float p = getObject(s);
+		return (p == null) ? -1F : p.floatValue();
+	}
 	
 	public double getDouble(String s)
-	{ Double p = getObject(s);
-	return (p == null) ? -1D : p.doubleValue(); }
+	{
+		Double p = getObject(s);
+		return (p == null) ? -1D : p.doubleValue();
+	}
 	
 	public NBTList getList(String s)
-	{ NBTBase p = map.get(s);
-	return (p == null) ? null : (NBTList)p; }
+	{
+		NBTBase p = map.get(s);
+		return (p == null) ? null : (NBTList) p;
+	}
 	
 	public NBTMap getMap(String s)
-	{ NBTBase p = map.get(s);
-	return (p == null) ? null : (NBTMap)p; }
+	{
+		NBTBase p = map.get(s);
+		return (p == null) ? null : (NBTMap) p;
+	}
 	
 	public byte[] getByteArray(String s)
 	{ return getObject(s); }
@@ -133,13 +157,13 @@ public class NBTMap extends NBTBase implements INBTParent
 	{ map.put(s, new NBTString(p).init(s, this)); }
 	
 	public void setBoolean(String s, boolean p)
-	{ map.put(s, new NBTByte(p ? (byte)1 : (byte)0).init(s, this)); }
+	{ map.put(s, new NBTByte(p ? (byte) 1 : (byte) 0).init(s, this)); }
 	
 	public void setByte(String s, int p)
-	{ map.put(s, new NBTByte((byte)p).init(s, this)); }
+	{ map.put(s, new NBTByte((byte) p).init(s, this)); }
 	
 	public void setShort(String s, int p)
-	{ map.put(s, new NBTShort((short)p).init(s, this)); }
+	{ map.put(s, new NBTShort((short) p).init(s, this)); }
 	
 	public void setInt(String s, int p)
 	{ map.put(s, new NBTInt(p).init(s, this)); }
@@ -188,8 +212,11 @@ public class NBTMap extends NBTBase implements INBTParent
 		return map1;
 	}
 	
-	public boolean equals(Object o) { if(o == null) return false;
-	return (o instanceof NBTMap) && ((NBTMap)o).map.equals(map); }
+	public boolean equals(Object o)
+	{
+		if(o == null) return false;
+		return (o instanceof NBTMap) && ((NBTMap) o).map.equals(map);
+	}
 	
 	public boolean isEmpty()
 	{ return map.isEmpty(); }

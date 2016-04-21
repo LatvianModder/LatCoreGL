@@ -7,7 +7,10 @@ public class NBTShort extends NBTBase
 	public short data;
 	
 	public NBTShort(short p)
-	{ super(NBTID.SHORT); data = p; }
+	{
+		super(NBTID.SHORT);
+		data = p;
+	}
 	
 	public void read(ByteIOStream dios)
 	{ data = dios.readShort(); }

@@ -1,6 +1,8 @@
 package latmod.core;
 
-/** Made by LatvianModder */
+/**
+ * Made by LatvianModder
+ */
 public abstract class Event
 {
 	private boolean cancelled = false;

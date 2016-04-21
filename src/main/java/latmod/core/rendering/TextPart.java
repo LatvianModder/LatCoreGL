@@ -1,9 +1,8 @@
 package latmod.core.rendering;
 
 import latmod.core.nbt.NBTMap;
-import latmod.lib.FastList;
 
-import java.util.List;
+import java.util.*;
 
 public class TextPart
 {
@@ -70,38 +69,56 @@ public class TextPart
 	}
 	
 	public TextPart setCantAdd()
-	{ canAdd = false; return this; }
+	{
+		canAdd = false;
+		return this;
+	}
 	
 	public TextPart setBold(boolean b)
-	{ isBold = b; return this; }
+	{
+		isBold = b;
+		return this;
+	}
 	
 	public boolean isBold()
 	{ return isBold == null ? parent.isBold() : isBold; }
 	
 	public TextPart setItalic(boolean b)
-	{ isItalic = b; return this; }
+	{
+		isItalic = b;
+		return this;
+	}
 	
 	public boolean isItalic()
 	{ return isItalic == null ? parent.isItalic() : isItalic; }
 	
 	public TextPart setHasUnderline(boolean b)
-	{ hasUnderline = b; return this; }
+	{
+		hasUnderline = b;
+		return this;
+	}
 	
 	public boolean hasUnderline()
 	{ return hasUnderline == null ? parent.hasUnderline() : hasUnderline; }
 	
 	public TextPart setColor(TextColor c)
-	{ color = c; return this; }
+	{
+		color = c;
+		return this;
+	}
 	
 	public TextColor getColor()
 	{ return color == null ? parent.getColor() : color; }
 	
 	public TextPart add(TextPart p)
-	{ p.parent = this; return p; }
+	{
+		p.parent = this;
+		return p;
+	}
 	
 	public String toString()
 	{ return parent.toString() + text; }
-
+	
 	public String toFormattedString()
 	{
 		StringBuilder sb = new StringBuilder();
@@ -132,16 +149,19 @@ public class TextPart
 	
 	public int length()
 	{ return parent.length() + text.length(); }
-
+	
 	public List<TextPart> toList()
 	{
-		FastList<TextPart> l = new FastList<>();
+		List<TextPart> l = new ArrayList<>();
 		addToList(l);
 		return l;
 	}
 	
 	private void addToList(List<TextPart> l)
-	{ if(this != defaultParentTextPart) parent.addToList(l); l.add(this); }
+	{
+		if(this != defaultParentTextPart) parent.addToList(l);
+		l.add(this);
+	}
 	
 	// Static //
 	

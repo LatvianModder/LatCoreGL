@@ -1,4 +1,4 @@
-package latmod.core.input.keys;
+package latmod.core.input;
 
 import latmod.lib.LMStringUtils;
 import org.lwjgl.input.Keyboard;

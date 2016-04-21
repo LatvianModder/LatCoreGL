@@ -2,7 +2,9 @@ package latmod.core.nbt;
 
 import latmod.lib.*;
 
-/** Made by Mojang, rewritten by LatvianModder */
+/**
+ * Made by Mojang, rewritten by LatvianModder
+ */
 public abstract class NBTBase
 {
 	public static final ByteCount ARRAY_BYTE_COUNT = ByteCount.SHORT;
@@ -18,7 +20,10 @@ public abstract class NBTBase
 	{ return parent; }
 	
 	public NBTBase init(String s, INBTParent p)
-	{ parent = p; return this; }
+	{
+		parent = p;
+		return this;
+	}
 	
 	public abstract void read(ByteIOStream dios);
 	public abstract void write(ByteIOStream dios);

@@ -7,7 +7,10 @@ public class NBTInt extends NBTBase
 	public int data;
 	
 	public NBTInt(int p)
-	{ super(NBTID.INT); data = p; }
+	{
+		super(NBTID.INT);
+		data = p;
+	}
 	
 	public void read(ByteIOStream dios)
 	{ data = dios.readInt(); }

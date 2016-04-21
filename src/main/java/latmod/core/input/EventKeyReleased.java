@@ -1,4 +1,4 @@
-package latmod.core.input.keys;
+package latmod.core.input;
 
 public class EventKeyReleased extends EventKey
 {

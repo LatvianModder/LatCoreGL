@@ -1,45 +1,42 @@
 package latmod.core;
 
+import latmod.core.gui.*;
 import latmod.core.input.*;
 import latmod.core.rendering.*;
-import latmod.core.res.*;
 import latmod.core.sound.SoundManager;
 import latmod.lib.LMColorUtils;
+import latmod.lib.net.Response;
 import org.lwjgl.opengl.*;
 
 import java.nio.ByteBuffer;
 
-/** Made by LatvianModder */
-public class LMFrame implements IInputEvents, Runnable
+/**
+ * Made by LatvianModder
+ */
+public class LMFrame implements Runnable, IWindow
 {
 	public final MainArgs mainArgs;
-	public final InputHandler inputHandler;
-	public int width, height, screenWidth, screenHeight;
+	public int width, height;
 	public Thread renderThread;
 	private int rawFPS = 0;
 	private long lastFPS;
 	public int FPS;
 	public long renderTick;
-	public boolean hasInited = false;
 	private boolean shouldDestroy = false;
 	
-	public ResourceManager resManager;
-	public SoundManager soundManager;
-	public TextureManager textureManager;
-	public Font font;
+	private SoundManager soundManager;
+	private TextureManager textureManager;
+	private Font font;
+	private Gui gui;
 	
 	public LMFrame(String[] args, int w, int h) throws Exception
 	{
+		LatCoreGL.init();
 		mainArgs = new MainArgs(args);
-		inputHandler = new InputHandler();
-		LatCoreGL.mainFrame = this;
-
+		
 		width = mainArgs.getI("width", w, 200, Short.MAX_VALUE);
 		height = mainArgs.getI("height", h, 150, Short.MAX_VALUE);
-        
-		DisplayMode d = Display.getDesktopDisplayMode();
-		screenWidth = d.getWidth();
-		screenHeight = d.getHeight();
+		
 		renderThread = new Thread(this, "LMFrame");
 		renderThread.start();
 	}
@@ -50,19 +47,21 @@ public class LMFrame implements IInputEvents, Runnable
 	
 	public void onLoaded() throws Exception
 	{
+		LatCoreGL.window = this;
+		openGui(new GuiInit());
+		
 		Display.setDisplayMode(new DisplayMode(width, height));
 		setTitle("LMFrame");
 		Display.setResizable(isResizable());
 		Display.create();
 		Renderer.init(width, height);
 		Renderer.enter2D();
-
+		
 		GLHelper.blending.enable();
 		GLHelper.blendFunc.setDefault();
-
-		resManager = new StreamResManager();
-		soundManager = new SoundManager(resManager);
-		textureManager = new TextureManager(resManager);
+		
+		soundManager = new SoundManager(this);
+		textureManager = new TextureManager(this);
 		
 		lastFPS = Time.millis();
 		
@@ -70,9 +69,6 @@ public class LMFrame implements IInputEvents, Runnable
 		setIcon("gui/logo_16.png", "gui/logo_32.png", "gui/logo_128.png");
 		
 		font = new Font(textureManager, Resource.getTexture("font.png"));
-		
-		hasInited = true;
-		inputHandler.add(this);
 	}
 	
 	protected boolean isResizable()
@@ -82,7 +78,7 @@ public class LMFrame implements IInputEvents, Runnable
 	{
 		ByteBuffer[] list = new ByteBuffer[iconPaths.length];
 		for(int i = 0; i < iconPaths.length; i++)
-		list[i] = LatCoreGL.toByteBuffer(textureManager.getTexture(Resource.getTexture(iconPaths[i])).pixels.pixels, true);
+			list[i] = LatCoreGL.toByteBuffer(textureManager.getTexture(Resource.getTexture(iconPaths[i])).pixels.pixels, true);
 		Display.setIcon(list);
 	}
 	
@@ -90,16 +86,15 @@ public class LMFrame implements IInputEvents, Runnable
 	{
 		try
 		{
-			LatCoreGL.mainFrame = this;
 			onLoaded();
 			
-			while(renderThread != null)
+			while(renderThread != null && !shouldDestroy)
 			{
 				if(Display.isCloseRequested()) destroy();
 				
 				long millis = Time.millis();
 				
-				while (millis - lastFPS > 1000L)
+				while(millis - lastFPS > 1000L)
 				{
 					FPS = rawFPS;
 					rawFPS = 0;
@@ -115,8 +110,26 @@ public class LMFrame implements IInputEvents, Runnable
 				LMKeyboard.update();
 				onUpdate();
 				
-				if(Display.wasResized()) onResized();
-
+				if(Display.wasResized())
+				{
+					int w = Display.getWidth();
+					int h = Display.getHeight();
+					
+					if(w != width || h != height)
+					{
+						int pW = width;
+						int pH = height;
+						
+						width = w;
+						height = h;
+						Renderer.init(width, height);
+						
+						EventGroup.DEFAULT.send(new EventResized(this, pW, pH));
+					}
+					
+					gui.init();
+				}
+				
 				GLHelper.clear();
 				GLHelper.background.setI(LMColorUtils.DARK_GRAY);
 				GLHelper.color.setDefault();
@@ -129,16 +142,32 @@ public class LMFrame implements IInputEvents, Runnable
 				
 				renderTick++;
 				if(renderTick < 0) renderTick = 0;
-				
-				if(shouldDestroy) LatCoreGL.stop();
-				//Thread.sleep(1);
 			}
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			LatCoreGL.stop();
 		}
+		
+		LatCoreGL.logger.info("Stopping Frame...");
+		
+		Widget.playSound = false;
+		
+		try
+		{
+			EventGroup.DEFAULT.send(new EventDestroy());
+			onDestroyed();
+			LMMouse.destroy();
+			LMKeyboard.destroy();
+			Display.destroy();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		renderThread = null;
+		System.exit(0);
 	}
 	
 	protected boolean canFullscreen()
@@ -158,35 +187,55 @@ public class LMFrame implements IInputEvents, Runnable
 		textureManager.onDestroyed();
 	}
 	
-	public void setPosition(int x, int y)
-	{ Display.setLocation(x, y); }
-	
 	public void setTitle(String s)
 	{ if(s != null) Display.setTitle(s); }
 	
-	public void onResized()
-	{
-		int w = Display.getWidth();
-		int h = Display.getHeight();
-		
-		if(w != width || h != height)
-		{
-			int pW = width;
-			int pH = height;
-			
-			width = w; height = h;
-			Renderer.init(width, height);
-			
-			EventGroup.DEFAULT.send(new EventResized(this, pW, pH));
-		}
-	}
-
-	public static final boolean isFocused()
-	{ return Display.isActive(); }
+	public final int getWidth()
+	{ return width; }
 	
-	public static final boolean isVisible()
-	{ return Display.isVisible(); }
+	public final int getHeight()
+	{ return height; }
+	
+	public Response getData(Resource r) throws Exception
+	{ return new Response(LMFrame.class.getResourceAsStream(r.getID())); }
+	
+	public final SoundManager getSoundManager()
+	{ return soundManager; }
+	
+	public final TextureManager getTextureManager()
+	{ return textureManager; }
+	
+	public final Font getFont()
+	{ return font; }
+	
+	public final Gui getGui()
+	{ return gui; }
+	
+	public final void openGui(Gui g)
+	{
+		gui = g;
+	}
 	
 	public final void destroy()
 	{ shouldDestroy = true; }
+	
+	public void onKeyPressed(EventKeyPressed e)
+	{
+	}
+	
+	public void onKeyReleased(EventKeyReleased e)
+	{
+	}
+	
+	public void onMousePressed(EventMousePressed e)
+	{
+	}
+	
+	public void onMouseReleased(EventMouseReleased e)
+	{
+	}
+	
+	public void onMouseScrolled(EventMouseScrolled e)
+	{
+	}
 }

@@ -1,10 +1,13 @@
 package latmod.core;
+
 import java.util.Date;
 
-/** Made by LatvianModder */
+/**
+ * Made by LatvianModder
+ */
 public final class Time
 {
-	public static enum Month
+	public enum Month
 	{
 		January,
 		February,
@@ -18,9 +21,9 @@ public final class Time
 		October,
 		November,
 		December,
-	};
+	}
 	
-	public static enum Day
+	public enum Day
 	{
 		Sunday,
 		Monday,
@@ -29,7 +32,7 @@ public final class Time
 		Thursday,
 		Friday,
 		Saturday,
-	};
+	}
 	
 	public final long millis;
 	public final Date date;

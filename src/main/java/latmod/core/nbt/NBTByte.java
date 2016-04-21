@@ -7,14 +7,17 @@ public class NBTByte extends NBTBase
 	public byte data;
 	
 	public NBTByte(byte p)
-	{ super(NBTID.BYTE); data = p; }
-
+	{
+		super(NBTID.BYTE);
+		data = p;
+	}
+	
 	public void read(ByteIOStream dios)
-	{ data = (byte)dios.readByte(); }
-
+	{ data = dios.readByte(); }
+	
 	public void write(ByteIOStream dios)
 	{ dios.writeByte(data); }
-
+	
 	public int getByteCount()
 	{ return 1; }
 	

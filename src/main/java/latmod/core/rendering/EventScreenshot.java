@@ -5,7 +5,9 @@ import latmod.core.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-/** Made by LatvianModder */
+/**
+ * Made by LatvianModder
+ */
 public class EventScreenshot extends Event
 {
 	public final ThreadScreenshot thread;

@@ -10,7 +10,7 @@ public class MainArgs
 	public MainArgs(String[] args)
 	{
 		String json = "{" + ((args == null) ? "" : LMStringUtils.unsplit(args, " ")) + "}";
-		jsonObject = LMJsonUtils.getJsonElement(json).getAsJsonObject();
+		jsonObject = LMJsonUtils.fromJson(json).getAsJsonObject();
 	}
 	
 	public JsonObject getJson()

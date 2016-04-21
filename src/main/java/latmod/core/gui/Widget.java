@@ -1,72 +1,93 @@
 package latmod.core.gui;
 
-import latmod.core.LatCoreGL;
+import latmod.core.*;
 import latmod.core.input.*;
 import latmod.core.rendering.*;
-import latmod.core.res.Resource;
-import latmod.lib.util.Box2D;
+import latmod.lib.util.FinalIDObject;
 
-/** Made by LatvianModder */
-public class Widget extends Box2D implements IInputEvents
+import java.util.List;
+
+/**
+ * Made by LatvianModder
+ */
+public class Widget extends FinalIDObject implements IInputHandler
 {
 	public static boolean playSound = true;//IScreen
 	
 	public static final Resource sound_click = Resource.getSound("click");
 	
 	public static boolean playClickSound()
-	{ if(playSound) playSound(sound_click); return playSound; }
-	
-	public final Gui gui;
-	public int widgetID = 0;
-	
-	public String txt = null;
-	public boolean selected = false;
-	public int color = 0xFFFFFFFF;
-	
-	public Widget(Gui s, double x, double y, double w, double h)
 	{
-		gui = s;
+		if(playSound) LatCoreGL.window.getSoundManager().playSound(sound_click);
+		return playSound;
+	}
+	
+	public Panel panel;
+	public double posX, posY, width, height;
+	
+	public Widget(String id, double x, double y, double w, double h)
+	{
+		super(id);
 		posX = x;
 		posY = y;
 		width = w;
 		height = h;
-		
-		if(centerX()) posX -= width / 2D;
-		if(centerY()) posY -= height / 2D;
 	}
 	
-	public boolean centerX()
-	{ return false; }
+	public final Widget setPanel(Panel p)
+	{
+		panel = p;
+		return this;
+	}
 	
-	public boolean centerY()
-	{ return false; }
+	public final Gui getGui()
+	{ return LatCoreGL.window.getGui(); }
 	
-	public final int hashCode()
-	{ return widgetID; }
+	public double getAX()
+	{ return (panel == null) ? posX : (panel.getAX() + posX); }
 	
-	public Widget setText(String t)
-	{ txt = t; return this; }
+	public double getAY()
+	{ return (panel == null) ? posY : (panel.getAY() + posY); }
 	
-	public void onRender()
+	public void renderWidget()
 	{
 		GLHelper.texture.disable();
 		GLHelper.color.setI(0, 0, 0, 50);
-		Renderer.rect(posX, posY, width, height);
+		Renderer.rect(getAX(), getAY(), width, height);
 	}
 	
-	public void onPostRender()
+	public void getMouseOverText(List<String> list)
 	{
 	}
 	
 	public boolean mouseOver()
-	{ return LMMouse.isOver(this); }
+	{ return isAt(LMMouse.x, LMMouse.y); }
 	
-	public void textCentred(double x, double y, String s)
-	{ gui.parent.font.drawText(x - gui.parent.font.textWidth(s) / 2D, y - 8D, s); }
+	public boolean isAt(double x, double y)
+	{
+		double ax = getAX();
+		double ay = getAY();
+		if(x < ax || y < ay || x > ax + width) return false;
+		return y <= posY + height;
+	}
 	
-	public Widget setColor(int c)
-	{ color = c; return this; }
+	public void onKeyPressed(EventKeyPressed e)
+	{
+	}
 	
-	public static void playSound(Resource r)
-	{ LatCoreGL.mainFrame.soundManager.playSound(r); }
+	public void onKeyReleased(EventKeyReleased e)
+	{
+	}
+	
+	public void onMousePressed(EventMousePressed e)
+	{
+	}
+	
+	public void onMouseReleased(EventMouseReleased e)
+	{
+	}
+	
+	public void onMouseScrolled(EventMouseScrolled e)
+	{
+	}
 }

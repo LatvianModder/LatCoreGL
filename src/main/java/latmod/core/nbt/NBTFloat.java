@@ -7,11 +7,14 @@ public class NBTFloat extends NBTBase
 	public float data;
 	
 	public NBTFloat(float p)
-	{ super(NBTID.FLOAT); data = p; }
-
+	{
+		super(NBTID.FLOAT);
+		data = p;
+	}
+	
 	public void read(ByteIOStream dios)
 	{ data = dios.readFloat(); }
-
+	
 	public void write(ByteIOStream dios)
 	{ dios.writeFloat(data); }
 	

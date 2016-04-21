@@ -26,7 +26,10 @@ public class Sound
 	}
 	
 	public void togglePaused()
-	{ if(isPlaying) pause(); else play(); }
+	{
+		if(isPlaying) pause();
+		else play();
+	}
 	
 	public void play()
 	{
@@ -53,7 +56,7 @@ public class Sound
 	public void update()
 	{
 		AL10.alSourcei(sourceID, AL10.AL_BUFFER, soundContainer.bufferID);
-		AL10.alSourcef(sourceID, AL10.AL_PITCH, (float)pitch);
-		AL10.alSourcef(sourceID, AL10.AL_GAIN, (float)(gain * soundContainer.manager.masterVolume));
+		AL10.alSourcef(sourceID, AL10.AL_PITCH, (float) pitch);
+		AL10.alSourcef(sourceID, AL10.AL_GAIN, (float) (gain * soundContainer.manager.masterVolume));
 	}
 }

@@ -9,7 +9,9 @@ import org.lwjgl.util.glu.GLU;
 import java.nio.ByteBuffer;
 import java.util.logging.Logger;
 
-/** Made by LatvianModder */
+/**
+ * Made by LatvianModder
+ */
 public class Renderer // Renderer3D
 {
 	public static final Logger logger = Logger.getLogger("Renderer");
@@ -22,7 +24,7 @@ public class Renderer // Renderer3D
 	
 	private static int startWidth, startHeight;
 	public static int drawingLevel = 0;
-
+	
 	public static void init(int w, int h)
 	{
 		startWidth = w;
@@ -31,11 +33,13 @@ public class Renderer // Renderer3D
 		enter2D();
 	}
 	
-	/** Rendering for Guis, Hud */
+	/**
+	 * Rendering for Guis, Hud
+	 */
 	public static void enter2D()
 	{
-		int w = LatCoreGL.getWidth();
-		int h = LatCoreGL.getHeight();
+		int w = LatCoreGL.window.getWidth();
+		int h = LatCoreGL.window.getHeight();
 		
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
@@ -47,27 +51,39 @@ public class Renderer // Renderer3D
 		GLHelper.cullFace.disable();
 		GLHelper.alphaTest.enable();
 		GLHelper.fog.disable();
-
+		
 		drawingLevel = 0;
 		GLHelper.color.setDefault();
 		GLHelper.bound_texture.set(0);
 	}
-
+	
 	public static void vertex(double x, double y, double z)
 	{ GL11.glVertex3d(x, y, z); }
-
+	
 	public static void vertex(double x, double y)
 	{ GL11.glVertex2d(x, y); }
 	
-	/** - */
+	/**
+	 * -
+	 */
 	public static void end()
-	{ GL11.glEnd(); drawingLevel--; }
+	{
+		GL11.glEnd();
+		drawingLevel--;
+	}
 	
-	/** - */
+	/**
+	 * -
+	 */
 	public static void begin(int i)
-	{ GL11.glBegin(i); drawingLevel++; }
+	{
+		GL11.glBegin(i);
+		drawingLevel++;
+	}
 	
-	/** - */
+	/**
+	 * -
+	 */
 	public static void beginQuads()
 	{ begin(GL11.GL_QUADS); }
 	
@@ -80,14 +96,16 @@ public class Renderer // Renderer3D
 	public static void beginPoints()
 	{ begin(GL11.GL_POINTS); }
 	
-	/** Draws 2D rectangle. If textures are enabled, then draws textured rect*/
+	/**
+	 * Draws 2D rectangle. If textures are enabled, then draws textured rect
+	 */
 	public static void rect(double x, double y, double w, double h)
 	{ rect(x, y, w, h, 0D, 0D, 1D, 1D); }
 	
 	public static void rect(double x, double y, double w, double h, double tx, double ty, double tw, double th)
 	{
 		beginQuads();
-
+		
 		if(GLHelper.texture.enabled)
 		{
 			vertexWithUV(x, y, tx, ty);
@@ -102,22 +120,36 @@ public class Renderer // Renderer3D
 			vertex(x + w, y + h);
 			vertex(x, y + h);
 		}
-
+		
 		end();
 	}
 	
-	/** Draws 3D line in world */
+	/**
+	 * Draws 3D line in world
+	 */
 	public static void line(double x, double y, double z, double x1, double y1, double z1)
-	{ begin(GL11.GL_LINES); vertex(x, y, z); vertex(x1, y1, z1); end(); }
+	{
+		begin(GL11.GL_LINES);
+		vertex(x, y, z);
+		vertex(x1, y1, z1);
+		end();
+	}
 	
-	/** Draws 2D line on screen */
+	/**
+	 * Draws 2D line on screen
+	 */
 	public static void line(double x, double y, double x1, double y1)
-	{ begin(GL11.GL_LINES); vertex(x, y); vertex(x1, y1); end(); }
+	{
+		begin(GL11.GL_LINES);
+		vertex(x, y);
+		vertex(x1, y1);
+		end();
+	}
 	
 	public static ByteBuffer getScreenPixels()
 	{
-		int w = LatCoreGL.getWidth();
-		int h = LatCoreGL.getHeight();
+		int w = LatCoreGL.window.getWidth();
+		int h = LatCoreGL.window.getHeight();
 		ByteBuffer bb = BufferUtils.createByteBuffer(w * h * 4);
 		GL11.glReadBuffer(GL11.GL_FRONT);
 		GL11.glReadPixels(0, 0, w, h, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, bb);
@@ -134,26 +166,36 @@ public class Renderer // Renderer3D
 	{ GL11.glTexCoord3d(x, y, z); }
 	
 	public static void vertexWithUV(double x, double y, double tx, double ty)
-	{ textureVertex(tx, ty); vertex(x, y); }
+	{
+		textureVertex(tx, ty);
+		vertex(x, y);
+	}
 	
 	public static void vertexWithUV(double x, double y, double z, double tx, double ty)
-	{ textureVertex(tx, ty); vertex(x, y, z); }
-
+	{
+		textureVertex(tx, ty);
+		vertex(x, y, z);
+	}
+	
 	public static int getStartHeight()
 	{ return startHeight; }
 	
 	public static int getStartWidth()
 	{ return startWidth; }
 	
-	/** Draws rectangle only from lines */
+	/**
+	 * Draws rectangle only from lines
+	 */
 	public static void linedRect(double x, double y, double w, double h)
 	{
 		GLHelper.polyMode.set(GLHelper.LINES);
 		rect(x, y, w, h);
 		GLHelper.polyMode.set(GLHelper.FILLED);
 	}
-
-	/** Draws circle with diameter 'd' */
+	
+	/**
+	 * Draws circle with diameter 'd'
+	 */
 	public static void drawPoly(double x, double y, double r, double detail)
 	{
 		if(detail < 2D) return;
@@ -161,12 +203,14 @@ public class Renderer // Renderer3D
 		
 		double step = 360F / detail;
 		for(double i = 0F; i <= 360F; i += step)
-		vertex(x + MathHelperLM.sin(i * MathHelperLM.RAD) * r, y + MathHelperLM.cos(i * MathHelperLM.RAD) * r);
+			vertex(x + MathHelperLM.sin(i * MathHelperLM.RAD) * r, y + MathHelperLM.cos(i * MathHelperLM.RAD) * r);
 		
 		end();
 	}
 	
-	/** Draws circle with diameter 'd' */
+	/**
+	 * Draws circle with diameter 'd'
+	 */
 	public static void drawPoly(double x, double y, double r, double detail, int innerCol, int outterCol)
 	{
 		if(detail < 2D) return;
@@ -177,12 +221,14 @@ public class Renderer // Renderer3D
 		GLHelper.color.setI(outterCol);
 		double step = 360F / detail;
 		for(double i = 0F; i <= 360F; i += step)
-		vertex(x + MathHelperLM.sin(i * MathHelperLM.RAD) * r, y + MathHelperLM.cos(i * MathHelperLM.RAD) * r);
+			vertex(x + MathHelperLM.sin(i * MathHelperLM.RAD) * r, y + MathHelperLM.cos(i * MathHelperLM.RAD) * r);
 		end();
 	}
 	
-	/** Draws arc with diameter 'd', rotation 'rot' and angle 'deg' <br>
-	 * 'deg' must be >= 0 & <= 360 */
+	/**
+	 * Draws arc with diameter 'd', rotation 'rot' and angle 'deg' <br>
+	 * 'deg' must be >= 0 & <= 360
+	 */
 	public static void drawArc(double x, double y, double d, double deg, double rot)
 	{
 		deg = deg % 360F;
@@ -193,13 +239,14 @@ public class Renderer // Renderer3D
 		vertex(x, y);
 		
 		for(double i = 0; i <= deg; i++)
-		vertex(x - MathHelperLM.sinFromDeg(i + 180F + rot) * d/2F,
-		y + MathHelperLM.cosFromDeg(i + 180F + rot) * d/2F);
+			vertex(x - MathHelperLM.sinFromDeg(i + 180F + rot) * d / 2F, y + MathHelperLM.cosFromDeg(i + 180F + rot) * d / 2F);
 		
 		end();
 	}
 	
-	/** Not finished yet! */
+	/**
+	 * Not finished yet!
+	 */
 	public static void drawArc(double x, double y, double inD, double outD, double deg, double rot)
 	{
 		deg = MathHelperLM.clamp(deg, 0F, 360F);
@@ -228,26 +275,34 @@ public class Renderer // Renderer3D
 	}
 	
 	public static void point(double x, double y)
-	{ begin(GL11.GL_POINTS); vertex(x, y); end();}
+	{
+		begin(GL11.GL_POINTS);
+		vertex(x, y);
+		end();
+	}
 	
 	public static int createListID()
 	{ return GL11.glGenLists(1); }
 	
 	public static int createAndUpdateListID()
-	{ int id = createListID(); updateList(id); return id; }
+	{
+		int id = createListID();
+		updateList(id);
+		return id;
+	}
 	
 	public static void updateList(int id)
 	{ GL11.glNewList(id, GL11.GL_COMPILE); }
 	
 	public static void renderList(int id)
 	{ GL11.glCallList(id); }
-
+	
 	public static void endList()
 	{ GL11.glEndList(); }
 	
 	public static void deleteList(int id)
 	{ GL11.glDeleteLists(id, 1); }
-
+	
 	public static void listMode(int mode)
 	{ GL11.glListBase(mode); }
 }
