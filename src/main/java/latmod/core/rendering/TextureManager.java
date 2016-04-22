@@ -93,7 +93,14 @@ public class TextureManager
 		t.update();
 		GLHelper.bound_texture.set(0);
 		
-		logger.info("Added texture " + r + " with id " + t.textureID + (failed ? " (Unknown)" : ""));
+		if(failed)
+		{
+			logger.warning("Unknown texture " + r + " added with id " + t.textureID);
+		}
+		else
+		{
+			logger.info("Added texture " + r + " with id " + t.textureID);
+		}
 		
 		t.exists = !failed;
 		t.onLoaded();
@@ -132,8 +139,15 @@ public class TextureManager
 	
 	public PixelBuffer loadImage(Resource r)
 	{
-		try { return new PixelBuffer(ImageIO.read(window.getData(r).stream)); }
-		catch(Exception e) { logger.warning("Can't load image '" + r + "'!"); }
+		try
+		{
+			return new PixelBuffer(ImageIO.read(window.getData(r).stream));
+		}
+		catch(Exception ex)
+		{
+			//logger.warning("Can't load image '" + r + "'!");
+		}
+		
 		return null;
 	}
 	

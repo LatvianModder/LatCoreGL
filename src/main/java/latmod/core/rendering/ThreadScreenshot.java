@@ -2,7 +2,6 @@ package latmod.core.rendering;
 
 import latmod.core.*;
 import latmod.lib.LMFileUtils;
-import org.lwjgl.opengl.Display;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -14,7 +13,7 @@ import java.nio.ByteBuffer;
  */
 public final class ThreadScreenshot extends Thread
 {
-	public static File outputFolder = null;
+	public File outputFolder = null;
 	
 	public ByteBuffer pixels = null;
 	public Time time = null;
@@ -22,13 +21,14 @@ public final class ThreadScreenshot extends Thread
 	public ThreadScreenshot()
 	{
 		super("Screenshot");
+		outputFolder = new File("/screenshots");
 		pixels = Renderer.getScreenPixels();
 	}
 	
 	public void run()
 	{
-		int w = Display.getWidth();
-		int h = Display.getHeight();
+		int w = LatCoreGL.window.getWidth();
+		int h = LatCoreGL.window.getHeight();
 		
 		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 		
@@ -50,14 +50,14 @@ public final class ThreadScreenshot extends Thread
 		sb.append(time.getTimeString().replace(':', '.'));
 		sb.append(".png");
 		
-		File file = LMFileUtils.newFile(new File("screenshots", sb.toString()));
+		File file = LMFileUtils.newFile(new File(outputFolder, sb.toString()));
 		
 		if(!EventGroup.DEFAULT.send(new EventScreenshot(this, time, image, file)))
 		{
 			try { ImageIO.write(image, "PNG", file); }
 			catch(Exception e) { e.printStackTrace(); }
 			
-			Renderer.logger.info("Saved screenshot " + file.getName());
+			LatCoreGL.logger.info("Saved screenshot " + file.getName());
 		}
 	}
 }

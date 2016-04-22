@@ -2,35 +2,20 @@ package latmod.core.rendering;
 
 import latmod.core.LatCoreGL;
 import latmod.lib.MathHelperLM;
-import org.lwjgl.*;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
 
 import java.nio.ByteBuffer;
-import java.util.logging.Logger;
 
 /**
  * Made by LatvianModder
  */
 public class Renderer // Renderer3D
 {
-	public static final Logger logger = Logger.getLogger("Renderer");
-	
-	static
-	{
-		logger.setParent(LatCoreGL.logger);
-		logger.info("LWJGL version: " + Sys.getVersion());
-	}
-	
-	private static int startWidth, startHeight;
 	public static int drawingLevel = 0;
 	
-	public static void init(int w, int h)
+	public static void init()
 	{
-		startWidth = w;
-		startHeight = h;
-		GL11.glViewport(0, 0, w, h);
-		enter2D();
 	}
 	
 	/**
@@ -43,7 +28,7 @@ public class Renderer // Renderer3D
 		
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GLU.gluOrtho2D(0F, w, h, 0F);
+		//FIXME: GLU.gluOrtho2D(0F, w, h, 0F);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		
@@ -176,12 +161,6 @@ public class Renderer // Renderer3D
 		textureVertex(tx, ty);
 		vertex(x, y, z);
 	}
-	
-	public static int getStartHeight()
-	{ return startHeight; }
-	
-	public static int getStartWidth()
-	{ return startWidth; }
 	
 	/**
 	 * Draws rectangle only from lines

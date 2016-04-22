@@ -3,10 +3,14 @@ package latmod.core.sound;
 import latmod.core.*;
 import latmod.lib.net.Response;
 import org.lwjgl.openal.*;
-import org.lwjgl.util.WaveData;
+import org.lwjgl.stb.STBVorbisInfo;
+import org.lwjgl.system.MemoryUtil;
 
+import java.nio.*;
 import java.util.*;
 import java.util.logging.Logger;
+
+import static org.lwjgl.openal.ALC10.alcGetString;
 
 /**
  * Made by LatvianModder
@@ -21,33 +25,52 @@ public final class SoundManager implements Runnable
 	private Thread thread;
 	public double masterVolume = 1D;
 	public boolean muted = false;
+	public long device, context;
 	
-	private final Map<Resource, SoundContainer> soundContainers = new HashMap<Resource, SoundContainer>();
-	private final List<Sound> soundSources = new ArrayList<Sound>();
+	private Map<Resource, SoundContainer> soundContainers = new HashMap<>();
+	private List<Sound> soundSources = new ArrayList<>();
 	
 	public SoundManager(IWindow w)
 	{
-		thread = new Thread(this, "SoundManager");
-		thread.setDaemon(true);
 		window = w;
-		
 		logger.info("Starting OpenAL...");
-		
-		try
-		{
-			AL.create();
-			thread.start();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			thread = null;
-			logger.warning("Failed to start OpenAL!");
-		}
+		thread = new Thread(this, "SoundEngine");
+		thread.setDaemon(true);
+		thread.start();
 	}
 	
 	public void run()
 	{
+		device = ALDevice.create().address();
+		if(device == MemoryUtil.NULL) throw new IllegalStateException("Failed to open the default device.");
+		
+		ALCCapabilities deviceCaps = ALC.getCapabilities();
+		
+		boolean success = false;
+		
+		if(deviceCaps.OpenALC10)
+		{
+			logger.info("OpenALC10: " + deviceCaps.OpenALC10 + ", OpenALC11: " + deviceCaps.OpenALC11 + ", caps.ALC_EXT_EFX: " + deviceCaps.ALC_EXT_EFX);
+			String defaultDeviceSpecifier = alcGetString(MemoryUtil.NULL, ALC10.ALC_DEFAULT_DEVICE_SPECIFIER);
+			logger.info("Default device: " + defaultDeviceSpecifier);
+			context = ALC10.alcCreateContext(device, (ByteBuffer) null);
+			ALC10.alcMakeContextCurrent(context);
+			AL.createCapabilities(device);
+			logger.info("Frequency: " + ALC10.alcGetInteger(device, ALC10.ALC_FREQUENCY) + "Hz, Refresh: " + ALC10.alcGetInteger(device, ALC10.ALC_REFRESH) + "Hz, Sync: " + (ALC10.alcGetInteger(device, ALC10.ALC_SYNC) == ALC10.ALC_TRUE) + ", Mono Sources: " + ALC10.alcGetInteger(device, ALC11.ALC_MONO_SOURCES) + ", Stereo Sources: " + ALC10.alcGetInteger(device, ALC11.ALC_STEREO_SOURCES));
+			success = true;
+		}
+		
+		if(success)
+		{
+			logger.info("OpenAL thread started");
+		}
+		else
+		{
+			logger.warning("Failed to start OpenAL!");
+			thread = null;
+			return;
+		}
+		
 		while(thread != null)
 		{
 			try
@@ -81,34 +104,32 @@ public final class SoundManager implements Runnable
 		{
 			Response is = window.getData(r);
 			if(is == null) throw new RuntimeException("Sound '" + r + "' not found!");
-			else return addSound(r, WaveData.create(is.stream));
+			
+			int bufferID = AL10.alGenBuffers();
+			
+			try
+			{
+				WaveData wd = WaveData.create(window.getData(r).stream);
+				AL10.alBufferData(bufferID, wd.format, wd.data, wd.samplerate);
+				wd.dispose();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				return null;
+			}
+			
+			logger.info("Adding new sound '" + r + "' with buffer ID " + bufferID);
+			SoundContainer sc = new SoundContainer(this, r, bufferID);
+			soundContainers.put(r, sc);
+			return sc;
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
+		
 		return null;
-	}
-	
-	private SoundContainer addSound(Resource r, WaveData wd)
-	{
-		int bufferID = AL10.alGenBuffers();
-		
-		try
-		{
-			AL10.alBufferData(bufferID, wd.format, wd.data, wd.samplerate);
-			wd.dispose();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		
-		logger.info("Adding new sound '" + r + "' with buffer ID " + bufferID);
-		SoundContainer sc = new SoundContainer(this, r, bufferID);
-		soundContainers.put(r, sc);
-		return sc;
 	}
 	
 	public void onDestroyed()
@@ -126,7 +147,7 @@ public final class SoundManager implements Runnable
 		
 		soundSources.clear();
 		
-		AL.destroy();
+		ALC10.alcDestroyContext(context);
 	}
 	
 	public Sound playSound(Resource r)
@@ -165,4 +186,38 @@ public final class SoundManager implements Runnable
 	
 	public boolean hasSoundContainer(Resource r)
 	{ return soundContainers.containsKey(r); }
+	
+	public static ShortBuffer readVorbis(String resource, int bufferSize, STBVorbisInfo info)
+	{
+		/*
+		ByteBuffer vorbis;
+		try
+		{
+			vorbis = ioResourceToByteBuffer(resource, bufferSize);
+		}
+		catch(IOException e)
+		{
+			throw new RuntimeException(e);
+		}
+		
+		IntBuffer error = BufferUtils.createIntBuffer(1);
+		long decoder = stb_vorbis_open_memory(vorbis, error, null);
+		if(decoder == MemoryUtil.NULL) throw new RuntimeException("Failed to open Ogg Vorbis file. Error: " + error.get(0));
+		
+		stb_vorbis_get_info(decoder, info);
+		
+		int channels = info.channels();
+		
+		int lengthSamples = stb_vorbis_stream_length_in_samples(decoder);
+		
+		ShortBuffer pcm = BufferUtils.createShortBuffer(lengthSamples);
+		
+		stb_vorbis_get_samples_short_interleaved(decoder, channels, pcm);
+		stb_vorbis_close(decoder);
+		
+		return pcm;
+		*/
+		
+		return null;
+	}
 }

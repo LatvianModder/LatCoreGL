@@ -1,12 +1,11 @@
 package latmod.core.input;
 
+import latmod.core.IWindow;
+
 public abstract class EventMouse extends EventInput
 {
-	public final int x, y;
-	
-	public EventMouse(int px, int py)
+	public EventMouse(IWindow w)
 	{
-		x = px;
-		y = py;
+		super(w);
 	}
 }

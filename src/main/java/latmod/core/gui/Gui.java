@@ -1,30 +1,34 @@
 package latmod.core.gui;
 
-import latmod.core.LatCoreGL;
+import latmod.core.*;
 import latmod.core.rendering.*;
-import latmod.lib.util.FinalIDObject;
 
 /**
  * Made by LatvianModder
  */
-public abstract class Gui extends FinalIDObject
+public abstract class Gui extends Panel
 {
+	public final IWindow window;
 	public final Panel mainPanel;
 	public Font font;
 	private boolean isDirty = true;
 	
-	public Gui(String id)
+	public Gui(String id, IWindow w)
 	{
-		super(id);
+		super(id, 0D, 0D, 0D, 0D);
+		window = w == null ? LatCoreGL.window : w;
 		
 		mainPanel = new Panel(id, 0, 0, 0, 0)
 		{
-			public void loadWidgets()
+			public void addWidgets()
 			{
-				Gui.this.loadWidgets();
+				Gui.this.addWidgets();
 			}
 		};
 	}
+	
+	public final IWindow getWindow()
+	{ return window; }
 	
 	public final void markDirty()
 	{ isDirty = true; }
@@ -34,12 +38,12 @@ public abstract class Gui extends FinalIDObject
 	
 	public void init()
 	{
-		mainPanel.width = LatCoreGL.window.getWidth();
-		mainPanel.height = LatCoreGL.window.getHeight();
+		mainPanel.width = window.getWidth();
+		mainPanel.height = window.getHeight();
 		font = LatCoreGL.window.getFont();
 	}
 	
-	public abstract void loadWidgets();
+	public abstract void addWidgets();
 	
 	public void onClosed()
 	{
@@ -50,7 +54,7 @@ public abstract class Gui extends FinalIDObject
 		if(isDirty)
 		{
 			mainPanel.widgets.clear();
-			mainPanel.loadWidgets();
+			mainPanel.addWidgets();
 			isDirty = false;
 		}
 		

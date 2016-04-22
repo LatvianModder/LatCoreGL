@@ -1,5 +1,6 @@
 package latmod.core.gui;
 
+import latmod.core.IWindow;
 import latmod.core.input.*;
 
 import java.util.*;
@@ -17,7 +18,10 @@ public class Panel extends Widget
 		widgets = new ArrayList<>();
 	}
 	
-	public void loadWidgets()
+	public IWindow getWindow()
+	{ return parentPanel == null ? null : parentPanel.getWindow(); }
+	
+	public void addWidgets()
 	{
 	}
 	
@@ -26,7 +30,7 @@ public class Panel extends Widget
 		if(w != null)
 		{
 			widgets.add(w);
-			w.setPanel(this);
+			w.setParentPanel(this);
 		}
 	}
 	

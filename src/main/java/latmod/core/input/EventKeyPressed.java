@@ -1,16 +1,19 @@
 package latmod.core.input;
 
+import latmod.core.IWindow;
 import latmod.lib.LMStringUtils;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 
 public class EventKeyPressed extends EventKey
 {
 	public final char keyChar;
+	public final boolean repeat;
 	
-	public EventKeyPressed(int k, char c)
+	public EventKeyPressed(IWindow w, int k, char c, boolean r)
 	{
-		super(k);
+		super(w, k);
 		keyChar = c;
+		repeat = r;
 	}
 	
 	public boolean canCancel()
@@ -20,11 +23,11 @@ public class EventKeyPressed extends EventKey
 	{ return LMStringUtils.isASCIIChar(keyChar); }
 	
 	public boolean isEnter()
-	{ return key == Keyboard.KEY_RETURN; }
+	{ return key == GLFW.GLFW_KEY_ENTER; }
 	
 	public boolean isBackspace()
-	{ return key == Keyboard.KEY_BACK; }
+	{ return key == GLFW.GLFW_KEY_BACKSPACE; }
 	
 	public boolean isTab()
-	{ return key == Keyboard.KEY_TAB; }
+	{ return key == GLFW.GLFW_KEY_TAB; }
 }

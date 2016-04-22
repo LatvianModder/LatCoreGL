@@ -18,18 +18,20 @@
         <NATIVE>
           <root url="file://$MODULE_DIR$/lib/native" />
         </NATIVE>
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/src.zip!/" />
+        </SOURCES>
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../LatLib/lib" />
+          <root url="file://$MODULE_DIR$/../../LatLib/lib" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/../LatLib/lib" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../../LatLib/lib" recursive="false" />
       </library>
     </orderEntry>
   </component>

@@ -7,10 +7,10 @@ public final class GuiInit extends Gui
 {
 	public GuiInit()
 	{
-		super("init");
+		super("init", null);
 	}
 	
-	public void loadWidgets()
+	public void addWidgets()
 	{
 	}
 }

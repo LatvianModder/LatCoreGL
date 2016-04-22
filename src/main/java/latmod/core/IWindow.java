@@ -11,6 +11,7 @@ import latmod.lib.net.Response;
  */
 public interface IWindow extends IInputHandler
 {
+	long getWindowID();
 	int getWidth();
 	int getHeight();
 	Response getData(Resource r) throws Exception;
@@ -18,6 +19,6 @@ public interface IWindow extends IInputHandler
 	TextureManager getTextureManager();
 	Font getFont();
 	Gui getGui();
-	void openGui(Gui g);
+	Gui openGui(Gui g);
 	void destroy();
 }

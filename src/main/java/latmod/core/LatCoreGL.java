@@ -1,8 +1,7 @@
 package latmod.core;
 
 import latmod.lib.LMColorUtils;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.*;
+import org.lwjgl.*;
 
 import java.nio.*;
 import java.util.logging.*;
@@ -64,8 +63,6 @@ public final class LatCoreGL
 				}
 			});
 			
-			logger.info("Logger inited!");
-			
 			systemOutLogger.setParent(logger);
 			
 			/*
@@ -77,9 +74,7 @@ public final class LatCoreGL
 			*/
 		}
 		
-		DisplayMode d = Display.getDesktopDisplayMode();
-		screenWidth = d.getWidth();
-		screenHeight = d.getHeight();
+		logger.info("LWJGL " + Version.getVersion());
 	}
 	
 	public static FloatBuffer floatBuffer(float a, float b, float c, float d)

@@ -14,7 +14,7 @@ public class Widget extends FinalIDObject implements IInputHandler
 {
 	public static boolean playSound = true;//IScreen
 	
-	public static final Resource sound_click = Resource.getSound("click");
+	public static final Resource sound_click = new Resource("core", "click");
 	
 	public static boolean playClickSound()
 	{
@@ -22,7 +22,7 @@ public class Widget extends FinalIDObject implements IInputHandler
 		return playSound;
 	}
 	
-	public Panel panel;
+	public Panel parentPanel;
 	public double posX, posY, width, height;
 	
 	public Widget(String id, double x, double y, double w, double h)
@@ -34,9 +34,9 @@ public class Widget extends FinalIDObject implements IInputHandler
 		height = h;
 	}
 	
-	public final Widget setPanel(Panel p)
+	public final Widget setParentPanel(Panel p)
 	{
-		panel = p;
+		parentPanel = p;
 		return this;
 	}
 	
@@ -44,10 +44,10 @@ public class Widget extends FinalIDObject implements IInputHandler
 	{ return LatCoreGL.window.getGui(); }
 	
 	public double getAX()
-	{ return (panel == null) ? posX : (panel.getAX() + posX); }
+	{ return (parentPanel == null) ? posX : (parentPanel.getAX() + posX); }
 	
 	public double getAY()
-	{ return (panel == null) ? posY : (panel.getAY() + posY); }
+	{ return (parentPanel == null) ? posY : (parentPanel.getAY() + posY); }
 	
 	public void renderWidget()
 	{
@@ -61,7 +61,9 @@ public class Widget extends FinalIDObject implements IInputHandler
 	}
 	
 	public boolean mouseOver()
-	{ return isAt(LMMouse.x, LMMouse.y); }
+	{
+		return isAt(LMInput.mouseX, LMInput.mouseY);
+	}
 	
 	public boolean isAt(double x, double y)
 	{
