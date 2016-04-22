@@ -21,16 +21,17 @@ public class Font
 	public Font(TextureManager tm, Resource r)
 	{
 		texManager = tm;
-		texture = texManager.getTexture(r);
-		texture.blured = bluredTexure();
-		texture.update();
+		texture = new Texture(r);
+		texture.setFlag(Texture.FLAG_STORE_PIXELS, true);
+		texture.setFlag(Texture.FLAG_BLUR, bluredTexure());
+		tm.bind(texture);
 		
-		int i = texture.pixels.width;
-		int j = texture.pixels.height;
+		int i = texture.pixelBuffer.width;
+		int j = texture.pixelBuffer.height;
 		int k = i / 16;
 		int l = j / 16;
-		double f = (double) i / 128F;
-		int ai[] = texture.pixels.pixels;
+		double f = i / 128D;
+		int ai[] = texture.pixelBuffer.pixels;
 		
 		for(int i1 = 0; i1 < 256; i1++)
 		{
@@ -140,7 +141,7 @@ public class Font
 		GLHelper.color.setDefault();
 		
 		Texture s2 = texManager.currentTexture;
-		texture.bind();
+		texManager.bind(texture);
 		
 		GLHelper.push();
 		GLHelper.translate(x, y + (1D - masterScale) * 16D);
@@ -196,7 +197,7 @@ public class Font
 			posX += f;
 		}
 		
-		if(s2 != null) s2.bind();
+		if(s2 != null) texManager.bind(s2);
 		GLHelper.pop();
 		GLHelper.color.setDefault();
 	}

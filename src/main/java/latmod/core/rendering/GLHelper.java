@@ -31,11 +31,21 @@ public class GLHelper extends Renderer
 		
 		public void set(boolean i)
 		{
+			if(setN(i))
+			{
+				onSet();
+			}
+		}
+		
+		public boolean setN(boolean i)
+		{
 			if(enabled != i)
 			{
 				enabled = i;
-				onSet();
+				return true;
 			}
+			
+			return false;
 		}
 		
 		public void enable()

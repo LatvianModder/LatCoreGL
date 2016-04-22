@@ -120,7 +120,7 @@ public class LMFrame implements IWindow
 			GLHelper.color.setDefault();
 			
 			onRender();
-			textureManager.updateCustomTextures();
+			textureManager.tickTextures();
 			
 			renderTick++;
 			if(renderTick < 0) renderTick = 0;
@@ -178,7 +178,11 @@ public class LMFrame implements IWindow
 	{
 		ByteBuffer[] list = new ByteBuffer[iconPaths.length];
 		for(int i = 0; i < iconPaths.length; i++)
-			list[i] = LatCoreGL.toByteBuffer(textureManager.getTexture(iconPaths[i]).pixels.pixels, true);
+		{
+			Texture t = new Texture(iconPaths[i]).setFlag(Texture.FLAG_STORE_PIXELS, true);
+			textureManager.bind(t);
+			list[i] = LatCoreGL.toByteBuffer(t.pixelBuffer.pixels, true);
+		}
 		//Display.setIcon(list);
 	}
 	

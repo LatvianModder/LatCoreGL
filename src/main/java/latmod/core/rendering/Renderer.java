@@ -28,7 +28,7 @@ public class Renderer // Renderer3D
 		
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		//FIXME: GLU.gluOrtho2D(0F, w, h, 0F);
+		GL11.glOrtho(0D, w, h, 0D, -0.1D, 0.1D);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		
