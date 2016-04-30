@@ -1,7 +1,9 @@
 package latmod.core.rendering;
 
-import latmod.core.*;
-import latmod.lib.*;
+import latmod.core.LatCoreGL;
+import latmod.core.Resource;
+import latmod.lib.Bits;
+import latmod.lib.PixelBuffer;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;
@@ -45,15 +47,18 @@ public class Texture
 	public boolean getFlag(byte flag)
 	{ return Bits.getBit(flags, flag); }
 	
+	@Override
 	public final int hashCode()
 	{ return res.hashCode(); }
 	
+	@Override
 	public final boolean equals(Object o)
 	{
 		if(o == null || !(o instanceof Texture)) return false;
 		return o.hashCode() == hashCode();
 	}
 	
+	@Override
 	public final String toString()
 	{ return res.toString(); }
 	

@@ -1,7 +1,8 @@
 package latmod.core.gui;
 
 import latmod.core.input.EventMousePressed;
-import latmod.core.rendering.*;
+import latmod.core.rendering.GLHelper;
+import latmod.core.rendering.Renderer;
 import latmod.lib.LMColorUtils;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public abstract class Button extends Widget
 		color = LMColorUtils.WIDGETS;
 	}
 	
+	@Override
 	public void renderWidget()
 	{
 		GLHelper.texture.disable();
@@ -29,6 +31,7 @@ public abstract class Button extends Widget
 		Renderer.rect(posX, posY, width, height);
 	}
 	
+	@Override
 	public void getMouseOverText(List<String> list)
 	{
 		if(title != null && !title.isEmpty())
@@ -38,6 +41,7 @@ public abstract class Button extends Widget
 		}
 	}
 	
+	@Override
 	public void onMousePressed(EventMousePressed e)
 	{
 		if(mouseOver())

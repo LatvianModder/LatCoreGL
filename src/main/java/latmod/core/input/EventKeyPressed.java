@@ -16,6 +16,7 @@ public class EventKeyPressed extends EventKey
 		repeat = r;
 	}
 	
+	@Override
 	public boolean canCancel()
 	{ return true; }
 	

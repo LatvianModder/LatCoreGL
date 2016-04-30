@@ -18,6 +18,7 @@ public enum Side
 		isClient = client;
 	}
 	
+	@Override
 	public String toString()
 	{ return name; }
 }

@@ -1,6 +1,7 @@
 package latmod.core.rendering;
 
-import latmod.core.*;
+import latmod.core.Event;
+import latmod.core.Time;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -23,6 +24,7 @@ public class EventScreenshot extends Event
 		file = f;
 	}
 	
+	@Override
 	public boolean canCancel()
 	{ return true; }
 }

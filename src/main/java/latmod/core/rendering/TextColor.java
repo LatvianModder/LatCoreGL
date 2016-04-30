@@ -55,6 +55,7 @@ public enum TextColor
 	TextColor(char c)
 	{ this(c, -1); }
 	
+	@Override
 	public String toString()
 	{ return txt; }
 	

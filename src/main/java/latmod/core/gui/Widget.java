@@ -1,8 +1,16 @@
 package latmod.core.gui;
 
-import latmod.core.*;
-import latmod.core.input.*;
-import latmod.core.rendering.*;
+import latmod.core.LatCoreGL;
+import latmod.core.Resource;
+import latmod.core.input.EventKeyPressed;
+import latmod.core.input.EventKeyReleased;
+import latmod.core.input.EventMousePressed;
+import latmod.core.input.EventMouseReleased;
+import latmod.core.input.EventMouseScrolled;
+import latmod.core.input.IInputHandler;
+import latmod.core.input.LMInput;
+import latmod.core.rendering.GLHelper;
+import latmod.core.rendering.Renderer;
 import latmod.lib.util.FinalIDObject;
 
 import java.util.List;
@@ -73,22 +81,27 @@ public class Widget extends FinalIDObject implements IInputHandler
 		return y <= posY + height;
 	}
 	
+	@Override
 	public void onKeyPressed(EventKeyPressed e)
 	{
 	}
 	
+	@Override
 	public void onKeyReleased(EventKeyReleased e)
 	{
 	}
 	
+	@Override
 	public void onMousePressed(EventMousePressed e)
 	{
 	}
 	
+	@Override
 	public void onMouseReleased(EventMouseReleased e)
 	{
 	}
 	
+	@Override
 	public void onMouseScrolled(EventMouseScrolled e)
 	{
 	}

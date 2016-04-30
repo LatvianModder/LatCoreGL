@@ -12,15 +12,19 @@ public class NBTInt extends NBTBase
 		data = p;
 	}
 	
+	@Override
 	public void read(ByteIOStream dios)
 	{ data = dios.readInt(); }
 	
+	@Override
 	public void write(ByteIOStream dios)
 	{ dios.writeInt(data); }
 	
+	@Override
 	public int getByteCount()
 	{ return 4; }
 	
+	@Override
 	public String toString()
 	{ return Integer.toString(data); }
 }

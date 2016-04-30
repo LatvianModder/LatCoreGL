@@ -1,6 +1,7 @@
 package latmod.core.nbt;
 
-import latmod.lib.*;
+import latmod.lib.ByteIOStream;
+import latmod.lib.LMStringUtils;
 
 public class NBTDoubleArray extends NBTBase
 {
@@ -12,6 +13,7 @@ public class NBTDoubleArray extends NBTBase
 		data = p;
 	}
 	
+	@Override
 	public void read(ByteIOStream dios)
 	{
 		int s = ARRAY_BYTE_COUNT.read(dios);
@@ -25,6 +27,7 @@ public class NBTDoubleArray extends NBTBase
 			data[i] = dios.readDouble();
 	}
 	
+	@Override
 	public void write(ByteIOStream dios)
 	{
 		ARRAY_BYTE_COUNT.write(dios, (data == null) ? -1 : data.length);
@@ -32,9 +35,11 @@ public class NBTDoubleArray extends NBTBase
 			dios.writeDouble(data[i]);
 	}
 	
+	@Override
 	public int getByteCount()
 	{ return ARRAY_BYTE_COUNT.bytes + ((data == null) ? 0 : data.length * 8); }
 	
+	@Override
 	public String toString()
 	{ return "[ " + LMStringUtils.stripD(data) + " ]"; }
 }

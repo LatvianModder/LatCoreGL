@@ -12,15 +12,19 @@ public class NBTDouble extends NBTBase
 		data = p;
 	}
 	
+	@Override
 	public void read(ByteIOStream dios)
 	{ data = dios.readDouble(); }
 	
+	@Override
 	public void write(ByteIOStream dios)
 	{ dios.writeDouble(data); }
 	
+	@Override
 	public int getByteCount()
 	{ return 8; }
 	
+	@Override
 	public String toString()
 	{ return Double.toString(data); }
 }

@@ -1,7 +1,9 @@
 package latmod.core.gui;
 
-import latmod.core.*;
-import latmod.core.rendering.*;
+import latmod.core.IWindow;
+import latmod.core.LatCoreGL;
+import latmod.core.rendering.Font;
+import latmod.core.rendering.GLHelper;
 
 /**
  * Made by LatvianModder
@@ -20,6 +22,7 @@ public abstract class Gui extends Panel
 		
 		mainPanel = new Panel(id, 0, 0, 0, 0)
 		{
+			@Override
 			public void addWidgets()
 			{
 				Gui.this.addWidgets();
@@ -27,6 +30,7 @@ public abstract class Gui extends Panel
 		};
 	}
 	
+	@Override
 	public final IWindow getWindow()
 	{ return window; }
 	
@@ -43,6 +47,7 @@ public abstract class Gui extends Panel
 		font = LatCoreGL.window.getFont();
 	}
 	
+	@Override
 	public abstract void addWidgets();
 	
 	public void onClosed()

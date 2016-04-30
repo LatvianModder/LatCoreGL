@@ -1,13 +1,25 @@
 package latmod.core.sound;
 
-import latmod.core.*;
+import latmod.core.IWindow;
+import latmod.core.LatCoreGL;
+import latmod.core.Resource;
 import latmod.lib.net.Response;
-import org.lwjgl.openal.*;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.AL10;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALC10;
+import org.lwjgl.openal.ALC11;
+import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.openal.ALDevice;
 import org.lwjgl.stb.STBVorbisInfo;
 import org.lwjgl.system.MemoryUtil;
 
-import java.nio.*;
-import java.util.*;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import static org.lwjgl.openal.ALC10.alcGetString;
@@ -39,6 +51,7 @@ public final class SoundManager implements Runnable
 		thread.start();
 	}
 	
+	@Override
 	public void run()
 	{
 		device = ALDevice.create().address();

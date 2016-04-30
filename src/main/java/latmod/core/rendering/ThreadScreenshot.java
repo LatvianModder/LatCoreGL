@@ -1,6 +1,8 @@
 package latmod.core.rendering;
 
-import latmod.core.*;
+import latmod.core.EventGroup;
+import latmod.core.LatCoreGL;
+import latmod.core.Time;
 import latmod.lib.LMFileUtils;
 
 import javax.imageio.ImageIO;
@@ -25,6 +27,7 @@ public final class ThreadScreenshot extends Thread
 		pixels = Renderer.getScreenPixels();
 	}
 	
+	@Override
 	public void run()
 	{
 		int w = LatCoreGL.window.getWidth();

@@ -2,7 +2,9 @@ package latmod.core.nbt;
 
 import latmod.lib.ByteIOStream;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Made by LatvianModder
@@ -17,6 +19,7 @@ public class NBTMap extends NBTBase implements INBTParent
 		map = new HashMap<>();
 	}
 	
+	@Override
 	public void read(ByteIOStream dios)
 	{
 		map.clear();
@@ -38,6 +41,7 @@ public class NBTMap extends NBTBase implements INBTParent
 		}
 	}
 	
+	@Override
 	public void write(ByteIOStream dios)
 	{
 		int s = size();
@@ -56,6 +60,7 @@ public class NBTMap extends NBTBase implements INBTParent
 		}
 	}
 	
+	@Override
 	public int getByteCount()
 	{
 		int bcount = 2;
@@ -70,6 +75,7 @@ public class NBTMap extends NBTBase implements INBTParent
 		return bcount;
 	}
 	
+	@Override
 	public String toString()
 	{ return map.toString(); }
 	
@@ -204,6 +210,7 @@ public class NBTMap extends NBTBase implements INBTParent
 	public boolean hasKey(String s)
 	{ return map.containsKey(s); }
 	
+	@Override
 	public NBTMap clone()
 	{
 		NBTMap map1 = new NBTMap();
@@ -212,6 +219,7 @@ public class NBTMap extends NBTBase implements INBTParent
 		return map1;
 	}
 	
+	@Override
 	public boolean equals(Object o)
 	{
 		if(o == null) return false;
@@ -221,6 +229,7 @@ public class NBTMap extends NBTBase implements INBTParent
 	public boolean isEmpty()
 	{ return map.isEmpty(); }
 	
+	@Override
 	public Collection<NBTBase> getChildren()
 	{ return map.values(); }
 }

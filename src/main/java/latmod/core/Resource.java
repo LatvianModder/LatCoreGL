@@ -38,6 +38,7 @@ public final class Resource implements IIDObject, Comparable<Resource>
 	public String getPath()
 	{ return path; }
 	
+	@Override
 	public String getID()
 	{
 		if(ID == null)
@@ -48,12 +49,15 @@ public final class Resource implements IIDObject, Comparable<Resource>
 		return ID;
 	}
 	
+	@Override
 	public int hashCode()
 	{ return getID().hashCode(); }
 	
+	@Override
 	public String toString()
 	{ return getID(); }
 	
+	@Override
 	public boolean equals(Object o)
 	{
 		if(o == null) return false;
@@ -66,6 +70,7 @@ public final class Resource implements IIDObject, Comparable<Resource>
 		return o.toString().equalsIgnoreCase(getID());
 	}
 	
+	@Override
 	public int compareTo(Resource o)
 	{
 		int i = base.compareToIgnoreCase(o.base);

@@ -12,6 +12,7 @@ public class EventMousePressed extends EventMouse
 		button = b;
 	}
 	
+	@Override
 	public boolean canCancel()
 	{ return true; }
 }

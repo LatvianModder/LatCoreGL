@@ -10,6 +10,7 @@ public final class GuiInit extends Gui
 		super("init", null);
 	}
 	
+	@Override
 	public void addWidgets()
 	{
 	}

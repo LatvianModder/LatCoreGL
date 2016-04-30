@@ -12,15 +12,19 @@ public class NBTShort extends NBTBase
 		data = p;
 	}
 	
+	@Override
 	public void read(ByteIOStream dios)
 	{ data = dios.readShort(); }
 	
+	@Override
 	public void write(ByteIOStream dios)
 	{ dios.writeShort(data); }
 	
+	@Override
 	public int getByteCount()
 	{ return 2; }
 	
+	@Override
 	public String toString()
 	{ return Short.toString(data); }
 }

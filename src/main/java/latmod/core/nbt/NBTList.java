@@ -2,7 +2,10 @@ package latmod.core.nbt;
 
 import latmod.lib.ByteIOStream;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Made by LatvianModder
@@ -18,6 +21,7 @@ public class NBTList extends NBTBase implements INBTParent
 		list = new ArrayList<>();
 	}
 	
+	@Override
 	public void read(ByteIOStream dios)
 	{
 		list.clear();
@@ -37,6 +41,7 @@ public class NBTList extends NBTBase implements INBTParent
 		}
 	}
 	
+	@Override
 	public void write(ByteIOStream dios)
 	{
 		int s = size();
@@ -53,9 +58,11 @@ public class NBTList extends NBTBase implements INBTParent
 		}
 	}
 	
+	@Override
 	public String toString()
 	{ return list.toString(); }
 	
+	@Override
 	public int getByteCount()
 	{
 		int bcount = 2;
@@ -113,9 +120,11 @@ public class NBTList extends NBTBase implements INBTParent
 	{
 		public int pos = 0;
 		
+		@Override
 		public boolean hasNext()
 		{ return pos < list.size(); }
 		
+		@Override
 		@SuppressWarnings("unchecked")
 		public E next()
 		{
@@ -124,9 +133,11 @@ public class NBTList extends NBTBase implements INBTParent
 			return (E) o;
 		}
 		
+		@Override
 		public void remove() { }
 	}
 	
+	@Override
 	public NBTList clone()
 	{
 		NBTList list1 = new NBTList();
@@ -135,12 +146,14 @@ public class NBTList extends NBTBase implements INBTParent
 		return list1;
 	}
 	
+	@Override
 	public boolean equals(Object o)
 	{
 		if(o == null) return false;
 		return (o instanceof NBTList) && ((NBTList) o).list.equals(list);
 	}
 	
+	@Override
 	public Collection<NBTBase> getChildren()
 	{ return list; }
 }

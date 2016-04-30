@@ -1,9 +1,14 @@
 package latmod.core.gui;
 
 import latmod.core.IWindow;
-import latmod.core.input.*;
+import latmod.core.input.EventKeyPressed;
+import latmod.core.input.EventKeyReleased;
+import latmod.core.input.EventMousePressed;
+import latmod.core.input.EventMouseReleased;
+import latmod.core.input.EventMouseScrolled;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by LatvianModder on 10.04.2016.
@@ -40,6 +45,7 @@ public class Panel extends Widget
 		return idx == -1 ? null : widgets.get(idx);
 	}
 	
+	@Override
 	public void renderWidget()
 	{
 		for(Widget w : widgets)
@@ -48,6 +54,7 @@ public class Panel extends Widget
 		}
 	}
 	
+	@Override
 	public void onKeyPressed(EventKeyPressed e)
 	{
 		for(Widget w : widgets)
@@ -57,6 +64,7 @@ public class Panel extends Widget
 		}
 	}
 	
+	@Override
 	public void onKeyReleased(EventKeyReleased e)
 	{
 		for(Widget w : widgets)
@@ -65,6 +73,7 @@ public class Panel extends Widget
 		}
 	}
 	
+	@Override
 	public void onMousePressed(EventMousePressed e)
 	{
 		for(Widget w : widgets)
@@ -74,6 +83,7 @@ public class Panel extends Widget
 		}
 	}
 	
+	@Override
 	public void onMouseReleased(EventMouseReleased e)
 	{
 		for(Widget w : widgets)
@@ -82,6 +92,7 @@ public class Panel extends Widget
 		}
 	}
 	
+	@Override
 	public void onMouseScrolled(EventMouseScrolled e)
 	{
 		for(Widget w : widgets)

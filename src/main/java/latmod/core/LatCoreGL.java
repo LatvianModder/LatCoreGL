@@ -1,10 +1,15 @@
 package latmod.core;
 
 import latmod.lib.LMColorUtils;
-import org.lwjgl.*;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.Version;
 
-import java.nio.*;
-import java.util.logging.*;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * Made by LatvianModder
@@ -28,6 +33,7 @@ public final class LatCoreGL
 			
 			logger.addHandler(new Handler()
 			{
+				@Override
 				public void publish(LogRecord record)
 				{
 					StringBuilder sb = new StringBuilder();
@@ -54,10 +60,12 @@ public final class LatCoreGL
 					}
 				}
 				
+				@Override
 				public void flush()
 				{
 				}
 				
+				@Override
 				public void close() throws SecurityException
 				{
 				}

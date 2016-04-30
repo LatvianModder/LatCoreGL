@@ -1,6 +1,7 @@
 package latmod.core.nbt;
 
-import latmod.lib.*;
+import latmod.lib.ByteCount;
+import latmod.lib.ByteIOStream;
 
 /**
  * Made by Mojang, rewritten by LatvianModder
@@ -28,6 +29,7 @@ public abstract class NBTBase
 	public abstract void read(ByteIOStream dios);
 	public abstract void write(ByteIOStream dios);
 	public abstract int getByteCount();
+	@Override
 	public abstract String toString();
 	
 	public final Object getData() { return null; }

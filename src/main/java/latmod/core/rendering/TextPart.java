@@ -2,27 +2,34 @@ package latmod.core.rendering;
 
 import latmod.core.nbt.NBTMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TextPart
 {
 	public static final TextPart defaultParentTextPart = new TextPart()
 	{
+		@Override
 		public boolean isBold()
 		{ return false; }
 		
+		@Override
 		public boolean isItalic()
 		{ return false; }
 		
+		@Override
 		public boolean hasUnderline()
 		{ return false; }
 		
+		@Override
 		public TextColor getColor()
 		{ return TextColor.WHITE; }
 		
+		@Override
 		public String toString()
 		{ return ""; }
 		
+		@Override
 		public int length()
 		{ return 0; }
 	};
@@ -116,6 +123,7 @@ public class TextPart
 		return p;
 	}
 	
+	@Override
 	public String toString()
 	{ return parent.toString() + text; }
 	

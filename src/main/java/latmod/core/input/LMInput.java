@@ -1,11 +1,18 @@
 package latmod.core.input;
 
-import latmod.core.*;
+import latmod.core.IWindow;
+import latmod.core.LatCoreGL;
 import latmod.lib.LMUtils;
-import org.lwjgl.glfw.*;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCursorPosCallback;
+import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.system.Retainable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class LMInput
 {
@@ -31,6 +38,7 @@ public class LMInput
 		
 		r = new GLFWKeyCallback()
 		{
+			@Override
 			public void invoke(long windowID, int key, int scancode, int action, int mods)
 			{
 				switch(action)
@@ -61,6 +69,7 @@ public class LMInput
 		
 		r = new GLFWCursorPosCallback()
 		{
+			@Override
 			public void invoke(long windowID, double xpos, double ypos)
 			{
 				mouseX = xpos;
@@ -73,6 +82,7 @@ public class LMInput
 		
 		r = new GLFWMouseButtonCallback()
 		{
+			@Override
 			public void invoke(long windowID, int button, int action, int mods)
 			{
 				switch(action)

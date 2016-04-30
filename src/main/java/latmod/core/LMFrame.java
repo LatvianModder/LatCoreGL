@@ -1,18 +1,34 @@
 package latmod.core;
 
-import latmod.core.gui.*;
-import latmod.core.input.*;
-import latmod.core.rendering.*;
+import latmod.core.gui.Gui;
+import latmod.core.gui.GuiInit;
+import latmod.core.gui.Widget;
+import latmod.core.input.EventKeyPressed;
+import latmod.core.input.EventKeyReleased;
+import latmod.core.input.EventMousePressed;
+import latmod.core.input.EventMouseReleased;
+import latmod.core.input.EventMouseScrolled;
+import latmod.core.input.LMInput;
+import latmod.core.rendering.Font;
+import latmod.core.rendering.GLHelper;
+import latmod.core.rendering.Renderer;
+import latmod.core.rendering.Texture;
+import latmod.core.rendering.TextureManager;
 import latmod.core.sound.SoundManager;
 import latmod.lib.LMColorUtils;
+import latmod.lib.LMUtils;
 import latmod.lib.net.Response;
 import latmod.lib.util.Pos2I;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 
-import java.nio.*;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 /**
  * Made by LatvianModder
@@ -26,8 +42,8 @@ public class LMFrame implements IWindow
 	public int FPS;
 	public long renderTick;
 	
-	private final GLFWErrorCallback errorCallback;
-	private final long window;
+	private GLFWErrorCallback errorCallback;
+	private long windowID;
 	
 	private SoundManager soundManager;
 	private TextureManager textureManager;
@@ -40,7 +56,11 @@ public class LMFrame implements IWindow
 		mainArgs = new MainArgs(args);
 		width = mainArgs.getI("width", w, 200, Short.MAX_VALUE);
 		height = mainArgs.getI("height", h, 150, Short.MAX_VALUE);
-		
+		run();
+	}
+	
+	public void run()
+	{
 		GLFW.glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 		
 		if(GLFW.glfwInit() != GLFW.GLFW_TRUE) throw new IllegalStateException("Unable to initialize GLFW");
@@ -49,31 +69,24 @@ public class LMFrame implements IWindow
 		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_TRUE);
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, isResizable() ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
 		
-		// Create the window
-		window = GLFW.glfwCreateWindow(width, height, "Hello World!", MemoryUtil.NULL, MemoryUtil.NULL);
-		if(window == MemoryUtil.NULL) throw new RuntimeException("Failed to create the GLFW window");
+		// Create the windowID
+		windowID = GLFW.glfwCreateWindow(width, height, "Hello World!", MemoryUtil.NULL, MemoryUtil.NULL);
+		if(windowID == MemoryUtil.NULL) throw new RuntimeException("Failed to create the GLFW window");
 		
 		LMInput.init(this);
 		
 		GLFWVidMode vidmode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
-		GLFW.glfwSetWindowPos(window, (vidmode.width() - width) / 2, (vidmode.height() - height) / 2);
-		GLFW.glfwMakeContextCurrent(window);
+		GLFW.glfwSetWindowPos(windowID, (vidmode.width() - width) / 2, (vidmode.height() - height) / 2);
+		GLFW.glfwMakeContextCurrent(windowID);
 		// Enable v-sync
 		GLFW.glfwSwapInterval(1);
-		GLFW.glfwShowWindow(window);
+		GLFW.glfwShowWindow(windowID);
 		
-		run();
-		
-		//key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE
-	}
-	
-	public void run()
-	{
 		GL.createCapabilities();
 		onLoaded();
 		GLHelper.background.setF(1F, 1F, 1F, 1F);
 		
-		while(GLFW.glfwWindowShouldClose(window) == GLFW.GLFW_FALSE)
+		while(GLFW.glfwWindowShouldClose(windowID) == GLFW.GLFW_FALSE)
 		{
 			GLHelper.clear();
 			
@@ -96,7 +109,7 @@ public class LMFrame implements IWindow
 			
 			IntBuffer bufferW = BufferUtils.createIntBuffer(1);
 			IntBuffer bufferH = BufferUtils.createIntBuffer(1);
-			GLFW.glfwGetWindowSize(window, bufferW, bufferH);
+			GLFW.glfwGetWindowSize(windowID, bufferW, bufferH);
 			int w = bufferW.get(0);
 			int h = bufferH.get(0);
 			
@@ -135,7 +148,7 @@ public class LMFrame implements IWindow
 			EventGroup.DEFAULT.send(new EventDestroy());
 			onDestroyed();
 			LMInput.release();
-			GLFW.glfwDestroyWindow(window);
+			GLFW.glfwDestroyWindow(windowID);
 		}
 		catch(Exception e)
 		{
@@ -204,32 +217,41 @@ public class LMFrame implements IWindow
 	}
 	
 	public void setTitle(String s)
-	{ if(s != null) GLFW.glfwSetWindowTitle(window, s); }
+	{ if(s != null) GLFW.glfwSetWindowTitle(windowID, s); }
 	
+	@Override
 	public final long getWindowID()
-	{ return window; }
+	{ return windowID; }
 	
+	@Override
 	public final int getWidth()
 	{ return width; }
 	
+	@Override
 	public final int getHeight()
 	{ return height; }
 	
+	@Override
 	public Response getData(Resource r) throws Exception
-	{ return new Response(Thread.currentThread().getContextClassLoader().getResourceAsStream("/assets/" + r.getBase() + '/' + r.getPath())); }
+	{ return new Response(LMUtils.class.getResourceAsStream("/assets/" + r.getBase() + '/' + r.getPath())); }
 	
+	@Override
 	public final SoundManager getSoundManager()
 	{ return soundManager; }
 	
+	@Override
 	public final TextureManager getTextureManager()
 	{ return textureManager; }
 	
+	@Override
 	public final Font getFont()
 	{ return font; }
 	
+	@Override
 	public final Gui getGui()
 	{ return gui; }
 	
+	@Override
 	public final Gui openGui(Gui g)
 	{
 		Gui prevGui = gui;
@@ -238,27 +260,33 @@ public class LMFrame implements IWindow
 		return prevGui;
 	}
 	
+	@Override
 	public final void destroy()
 	{
-		GLFW.glfwSetWindowShouldClose(window, GLFW.GLFW_TRUE);
+		GLFW.glfwSetWindowShouldClose(windowID, GLFW.GLFW_TRUE);
 	}
 	
+	@Override
 	public void onKeyPressed(EventKeyPressed e)
 	{
 	}
 	
+	@Override
 	public void onKeyReleased(EventKeyReleased e)
 	{
 	}
 	
+	@Override
 	public void onMousePressed(EventMousePressed e)
 	{
 	}
 	
+	@Override
 	public void onMouseReleased(EventMouseReleased e)
 	{
 	}
 	
+	@Override
 	public void onMouseScrolled(EventMouseScrolled e)
 	{
 	}
