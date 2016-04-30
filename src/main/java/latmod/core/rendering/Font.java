@@ -1,7 +1,8 @@
 package latmod.core.rendering;
 
 import latmod.core.Resource;
-import latmod.lib.*;
+import latmod.lib.LMColorUtils;
+import latmod.lib.MathHelperLM;
 
 /**
  * <b>Made by LatvianModder</b> <br>

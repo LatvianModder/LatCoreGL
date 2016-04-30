@@ -8,11 +8,7 @@ public class EventMousePressed extends EventMouse
 	
 	public EventMousePressed(IWindow w, int b)
 	{
-		super(w);
+		super(w, true);
 		button = b;
 	}
-	
-	@Override
-	public boolean canCancel()
-	{ return true; }
 }

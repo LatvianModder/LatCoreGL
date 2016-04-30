@@ -2,7 +2,8 @@ package latmod.core;
 
 import latmod.core.gui.Gui;
 import latmod.core.input.IInputHandler;
-import latmod.core.rendering.*;
+import latmod.core.rendering.Font;
+import latmod.core.rendering.TextureManager;
 import latmod.core.sound.SoundManager;
 import latmod.lib.net.Response;
 

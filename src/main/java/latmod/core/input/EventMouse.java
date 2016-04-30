@@ -4,8 +4,8 @@ import latmod.core.IWindow;
 
 public abstract class EventMouse extends EventInput
 {
-	public EventMouse(IWindow w)
+	public EventMouse(IWindow w, boolean b)
 	{
-		super(w);
+		super(w, b);
 	}
 }

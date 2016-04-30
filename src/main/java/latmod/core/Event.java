@@ -1,26 +1,23 @@
 package latmod.core;
 
 /**
- * Made by LatvianModder
+ * Created by LatvianModder on 30.04.2016.
  */
 public abstract class Event
 {
-	private boolean cancelled = false;
+	public final IWindow window;
+	private final boolean canCancel;
+	private boolean isCancelled;
 	
-	public boolean cancel()
+	public Event(IWindow w, boolean b)
 	{
-		if(!cancelled && canCancel())
-		{
-			cancelled = true;
-			return true;
-		}
-		
-		return false;
+		window = w;
+		canCancel = b;
 	}
 	
-	public boolean isCancelled()
-	{ return cancelled; }
+	public void cancel()
+	{ isCancelled = true; }
 	
-	public boolean canCancel()
-	{ return false; }
+	public boolean isCancelled()
+	{ return canCancel && isCancelled; }
 }

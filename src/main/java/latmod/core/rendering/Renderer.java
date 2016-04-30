@@ -12,8 +12,6 @@ import java.nio.ByteBuffer;
  */
 public class Renderer // Renderer3D
 {
-	public static int drawingLevel = 0;
-	
 	public static void init()
 	{
 	}
@@ -26,9 +24,12 @@ public class Renderer // Renderer3D
 		int w = LatCoreGL.window.getWidth();
 		int h = LatCoreGL.window.getHeight();
 		
+		GL11.glViewport(0, 0, w, h);
+		GLHelper.clear();
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0D, w, h, 0D, -0.1D, 0.1D);
+		float ratio = (float) w / (float) h;
+		GL11.glOrtho(-ratio, ratio, -1F, 1F, 1F, -1F);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		
@@ -37,7 +38,6 @@ public class Renderer // Renderer3D
 		GLHelper.alphaTest.enable();
 		GLHelper.fog.disable();
 		
-		drawingLevel = 0;
 		GLHelper.color.setDefault();
 		GLHelper.bound_texture.set(0);
 	}
@@ -48,23 +48,11 @@ public class Renderer // Renderer3D
 	public static void vertex(double x, double y)
 	{ GL11.glVertex2d(x, y); }
 	
-	/**
-	 * -
-	 */
 	public static void end()
-	{
-		GL11.glEnd();
-		drawingLevel--;
-	}
+	{ GL11.glEnd(); }
 	
-	/**
-	 * -
-	 */
 	public static void begin(int i)
-	{
-		GL11.glBegin(i);
-		drawingLevel++;
-	}
+	{ GL11.glBegin(i); }
 	
 	/**
 	 * -
@@ -142,7 +130,7 @@ public class Renderer // Renderer3D
 	}
 	
 	public static void takeScreenshot()
-	{ new ThreadScreenshot().start(); }
+	{ new ThreadScreenshot(LatCoreGL.window).start(); }
 	
 	public static void textureVertex(double x, double y)
 	{ GL11.glTexCoord2d(x, y); }

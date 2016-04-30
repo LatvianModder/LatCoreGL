@@ -1,13 +1,12 @@
 package latmod.core.input;
 
-import latmod.core.*;
+import latmod.core.Event;
+import latmod.core.IWindow;
 
 public abstract class EventInput extends Event
 {
-	public final IWindow window;
-	
-	public EventInput(IWindow w)
+	public EventInput(IWindow w, boolean b)
 	{
-		window = w;
+		super(w, b);
 	}
 }

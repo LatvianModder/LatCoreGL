@@ -6,9 +6,9 @@ public abstract class EventKey extends EventInput
 {
 	public final int key;
 	
-	public EventKey(IWindow w, int k)
+	public EventKey(IWindow w, boolean b, int k)
 	{
-		super(w);
+		super(w, b);
 		key = k;
 	}
 }

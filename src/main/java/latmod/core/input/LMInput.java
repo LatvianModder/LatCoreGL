@@ -1,6 +1,5 @@
 package latmod.core.input;
 
-import latmod.core.IWindow;
 import latmod.core.LatCoreGL;
 import latmod.lib.LMUtils;
 import org.lwjgl.glfw.GLFW;
@@ -16,7 +15,6 @@ import java.util.Map;
 
 public class LMInput
 {
-	private static IWindow window;
 	private static List<Retainable> retainables;
 	private static Map<Integer, Long> keyboardDelays;
 	private static Map<Integer, Long> mouseDelays;
@@ -24,16 +22,15 @@ public class LMInput
 	public static double mouseX, mouseY, mouseWheel;
 	public static double mouseDX, mouseDY, mouseDWheel;
 	
-	public static void init(IWindow w)
+	public static void init()
 	{
 		release();
 		
-		window = w;
 		retainables = new ArrayList<>();
 		keyboardDelays = new HashMap<>();
 		mouseDelays = new HashMap<>();
 		
-		GLFW.glfwSetInputMode(window.getWindowID(), GLFW.GLFW_STICKY_KEYS, 1);
+		GLFW.glfwSetInputMode(LatCoreGL.window.getWindowID(), GLFW.GLFW_STICKY_KEYS, 1);
 		Retainable r;
 		
 		r = new GLFWKeyCallback()
@@ -45,26 +42,26 @@ public class LMInput
 				{
 					case GLFW.GLFW_PRESS:
 					{
-						window.onKeyPressed(new EventKeyPressed(window, key, 'a', false));
+						LatCoreGL.window.onKeyPressed(new EventKeyPressed(LatCoreGL.window, key, 'a', false));
 						keyboardDelays.put(key, LMUtils.millis());
 						break;
 					}
 					case GLFW.GLFW_RELEASE:
 					{
-						window.onKeyReleased(new EventKeyReleased(window, key, LMUtils.millis() - keyboardDelays.get(key)));
+						LatCoreGL.window.onKeyReleased(new EventKeyReleased(LatCoreGL.window, key, LMUtils.millis() - (keyboardDelays.containsKey(key) ? keyboardDelays.get(key) : 0)));
 						keyboardDelays.remove(key);
 						break;
 					}
 					case GLFW.GLFW_REPEAT:
 					{
-						window.onKeyPressed(new EventKeyPressed(window, key, 'a', true));
+						LatCoreGL.window.onKeyPressed(new EventKeyPressed(LatCoreGL.window, key, 'a', true));
 						break;
 					}
 				}
 			}
 		};
 		
-		GLFW.glfwSetKeyCallback(window.getWindowID(), (GLFWKeyCallback) r);
+		GLFW.glfwSetKeyCallback(LatCoreGL.window.getWindowID(), (GLFWKeyCallback) r);
 		retainables.add(r);
 		
 		r = new GLFWCursorPosCallback()
@@ -77,7 +74,7 @@ public class LMInput
 			}
 		};
 		
-		GLFW.glfwSetCursorPosCallback(window.getWindowID(), (GLFWCursorPosCallback) r);
+		GLFW.glfwSetCursorPosCallback(LatCoreGL.window.getWindowID(), (GLFWCursorPosCallback) r);
 		retainables.add(r);
 		
 		r = new GLFWMouseButtonCallback()
@@ -89,13 +86,13 @@ public class LMInput
 				{
 					case GLFW.GLFW_PRESS:
 					{
-						window.onMousePressed(new EventMousePressed(window, button));
+						LatCoreGL.window.onMousePressed(new EventMousePressed(LatCoreGL.window, button));
 						mouseDelays.put(button, LMUtils.millis());
 						break;
 					}
 					case GLFW.GLFW_RELEASE:
 					{
-						window.onMouseReleased(new EventMouseReleased(window, button, LMUtils.millis() - mouseDelays.get(button)));
+						LatCoreGL.window.onMouseReleased(new EventMouseReleased(LatCoreGL.window, button, LMUtils.millis() - mouseDelays.get(button)));
 						mouseDelays.remove(button);
 						break;
 					}
@@ -103,18 +100,18 @@ public class LMInput
 			}
 		};
 		
-		GLFW.glfwSetMouseButtonCallback(window.getWindowID(), (GLFWMouseButtonCallback) r);
+		GLFW.glfwSetMouseButtonCallback(LatCoreGL.window.getWindowID(), (GLFWMouseButtonCallback) r);
 		retainables.add(r);
 	}
 	
 	public static void setMouseGrabbed(boolean b)
 	{
-		GLFW.glfwSetInputMode(window.getWindowID(), GLFW.GLFW_CURSOR, b ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
+		GLFW.glfwSetInputMode(LatCoreGL.window.getWindowID(), GLFW.GLFW_CURSOR, b ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
 	}
 	
 	public static boolean isMouseGrabbed()
 	{
-		return GLFW.glfwGetInputMode(window.getWindowID(), GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_DISABLED;
+		return GLFW.glfwGetInputMode(LatCoreGL.window.getWindowID(), GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_DISABLED;
 	}
 	
 	public static void release()
@@ -131,10 +128,10 @@ public class LMInput
 	}
 	
 	public static boolean isMouseDown(int i)
-	{ return GLFW.glfwGetMouseButton(window.getWindowID(), i) == GLFW.GLFW_PRESS; }
+	{ return GLFW.glfwGetMouseButton(LatCoreGL.window.getWindowID(), i) == GLFW.GLFW_PRESS; }
 	
 	public static boolean isKeyDown(int k)
-	{ return GLFW.glfwGetKey(window.getWindowID(), k) == GLFW.GLFW_PRESS; }
+	{ return GLFW.glfwGetKey(LatCoreGL.window.getWindowID(), k) == GLFW.GLFW_PRESS; }
 	
 	public static boolean isCtrlDown()
 	{ return isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL) || isKeyDown(GLFW.GLFW_KEY_RIGHT_CONTROL); }

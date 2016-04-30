@@ -8,7 +8,7 @@ public class EventMouseScrolled extends EventMouse
 	
 	public EventMouseScrolled(IWindow w, boolean u)
 	{
-		super(w);
+		super(w, true);
 		up = u;
 	}
 }

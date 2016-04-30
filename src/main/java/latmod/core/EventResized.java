@@ -2,13 +2,12 @@ package latmod.core;
 
 public class EventResized extends Event
 {
-	public LMFrame frame;
 	public final int prevWidth;
 	public final int prevHeight;
 	
-	public EventResized(LMFrame f, int pW, int pH)
+	public EventResized(IWindow w, int pW, int pH)
 	{
-		frame = f;
+		super(w, false);
 		prevWidth = pW;
 		prevHeight = pH;
 	}

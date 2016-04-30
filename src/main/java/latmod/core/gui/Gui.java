@@ -15,10 +15,10 @@ public abstract class Gui extends Panel
 	public Font font;
 	private boolean isDirty = true;
 	
-	public Gui(String id, IWindow w)
+	public Gui(IWindow w, String id)
 	{
 		super(id, 0D, 0D, 0D, 0D);
-		window = w == null ? LatCoreGL.window : w;
+		window = w;
 		
 		mainPanel = new Panel(id, 0, 0, 0, 0)
 		{

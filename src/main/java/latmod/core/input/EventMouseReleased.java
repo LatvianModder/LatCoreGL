@@ -9,7 +9,7 @@ public class EventMouseReleased extends EventMouse
 	
 	public EventMouseReleased(IWindow w, int b, long m)
 	{
-		super(w);
+		super(w, false);
 		button = b;
 		millis = m;
 	}

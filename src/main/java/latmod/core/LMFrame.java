@@ -24,7 +24,6 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
@@ -61,34 +60,49 @@ public class LMFrame implements IWindow
 	
 	public void run()
 	{
-		GLFW.glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
+		errorCallback = GLFWErrorCallback.createPrint(System.err);
+		GLFW.glfwSetErrorCallback(errorCallback);
 		
-		if(GLFW.glfwInit() != GLFW.GLFW_TRUE) throw new IllegalStateException("Unable to initialize GLFW");
+		if(GLFW.glfwInit() != GLFW.GLFW_TRUE)
+		{
+			throw new IllegalStateException("Unable to initialize GLFW");
+		}
 		
-		GLFW.glfwDefaultWindowHints();
-		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_TRUE);
-		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, isResizable() ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
-		
-		// Create the windowID
 		windowID = GLFW.glfwCreateWindow(width, height, "Hello World!", MemoryUtil.NULL, MemoryUtil.NULL);
-		if(windowID == MemoryUtil.NULL) throw new RuntimeException("Failed to create the GLFW window");
 		
-		LMInput.init(this);
+		if(windowID == MemoryUtil.NULL)
+		{
+			GLFW.glfwTerminate();
+			throw new RuntimeException("Failed to create the GLFW window");
+		}
 		
 		GLFWVidMode vidmode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 		GLFW.glfwSetWindowPos(windowID, (vidmode.width() - width) / 2, (vidmode.height() - height) / 2);
 		GLFW.glfwMakeContextCurrent(windowID);
-		// Enable v-sync
+		GL.createCapabilities();
 		GLFW.glfwSwapInterval(1);
 		GLFW.glfwShowWindow(windowID);
 		
-		GL.createCapabilities();
 		onLoaded();
-		GLHelper.background.setF(1F, 1F, 1F, 1F);
+		GLHelper.background.setF(0.2F, 0.2F, 0.2F, 1F);
+		
+		IntBuffer bufferW = BufferUtils.createIntBuffer(1);
+		IntBuffer bufferH = BufferUtils.createIntBuffer(1);
 		
 		while(GLFW.glfwWindowShouldClose(windowID) == GLFW.GLFW_FALSE)
 		{
-			GLHelper.clear();
+			int prevW = width;
+			int prevH = height;
+			
+			GLFW.glfwGetWindowSize(windowID, bufferW, bufferH);
+			width = bufferW.get();
+			height = bufferH.get();
+			bufferW.flip();
+			bufferH.flip();
+			
+			onRender();
+			textureManager.tickTextures();
+			renderTick++;
 			
 			long millis = Time.millis();
 			
@@ -103,40 +117,19 @@ public class LMFrame implements IWindow
 			}
 			
 			rawFPS++;
-			
+			GLFW.glfwSwapBuffers(windowID);
 			GLFW.glfwPollEvents();
 			onUpdate();
 			
-			IntBuffer bufferW = BufferUtils.createIntBuffer(1);
-			IntBuffer bufferH = BufferUtils.createIntBuffer(1);
-			GLFW.glfwGetWindowSize(windowID, bufferW, bufferH);
-			int w = bufferW.get(0);
-			int h = bufferH.get(0);
-			
-			if(w != width || h != height)
+			if(prevW != width || prevH != height)
 			{
-				int pW = width;
-				int pH = height;
-				
-				width = w;
-				height = h;
-				
-				GL11.glViewport(0, 0, width, height);
-				Renderer.enter2D();
-				
-				EventGroup.DEFAULT.send(new EventResized(this, pW, pH));
+				EventHandler.MAIN.send(new EventResized(this, prevW, prevH));
 				gui.init();
 			}
 			
 			GLHelper.clear();
 			GLHelper.background.setI(LMColorUtils.DARK_GRAY);
 			GLHelper.color.setDefault();
-			
-			onRender();
-			textureManager.tickTextures();
-			
-			renderTick++;
-			if(renderTick < 0) renderTick = 0;
 		}
 		
 		LatCoreGL.logger.info("Stopping Frame...");
@@ -145,7 +138,7 @@ public class LMFrame implements IWindow
 		
 		try
 		{
-			EventGroup.DEFAULT.send(new EventDestroy());
+			EventHandler.MAIN.send(new EventDestroy(this));
 			onDestroyed();
 			LMInput.release();
 			GLFW.glfwDestroyWindow(windowID);
@@ -165,11 +158,11 @@ public class LMFrame implements IWindow
 	public void onLoaded()
 	{
 		LatCoreGL.window = this;
-		openGui(new GuiInit());
+		LMInput.init();
 		
-		GL11.glViewport(0, 0, width, height);
+		openGui(new GuiInit(this));
+		
 		Renderer.enter2D();
-		
 		GLHelper.blending.enable();
 		GLHelper.blendFunc.setDefault();
 		
@@ -269,25 +262,30 @@ public class LMFrame implements IWindow
 	@Override
 	public void onKeyPressed(EventKeyPressed e)
 	{
+		gui.onKeyPressed(e);
 	}
 	
 	@Override
 	public void onKeyReleased(EventKeyReleased e)
 	{
+		gui.onKeyReleased(e);
 	}
 	
 	@Override
 	public void onMousePressed(EventMousePressed e)
 	{
+		gui.onMousePressed(e);
 	}
 	
 	@Override
 	public void onMouseReleased(EventMouseReleased e)
 	{
+		gui.onMouseReleased(e);
 	}
 	
 	@Override
 	public void onMouseScrolled(EventMouseScrolled e)
 	{
+		gui.onMouseScrolled(e);
 	}
 }

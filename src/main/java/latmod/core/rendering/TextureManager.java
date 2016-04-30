@@ -1,11 +1,17 @@
 package latmod.core.rendering;
 
-import latmod.core.*;
+import latmod.core.EventHandler;
+import latmod.core.IWindow;
+import latmod.core.LatCoreGL;
+import latmod.core.Resource;
 import latmod.lib.PixelBuffer;
 import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class TextureManager
@@ -91,7 +97,7 @@ public class TextureManager
 				tex.onUpdate(this);
 			}
 			
-			EventGroup.DEFAULT.send(new EventTextureLoaded(tex));
+			EventHandler.MAIN.send(new EventTextureLoaded(window, tex));
 		}
 		
 		GLHelper.bound_texture.set(tex.textureID);

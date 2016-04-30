@@ -60,7 +60,11 @@ public class Panel extends Widget
 		for(Widget w : widgets)
 		{
 			w.onKeyPressed(e);
-			if(e.isCancelled()) return;
+			
+			if(e.isCancelled())
+			{
+				return;
+			}
 		}
 	}
 	
@@ -79,7 +83,11 @@ public class Panel extends Widget
 		for(Widget w : widgets)
 		{
 			w.onMousePressed(e);
-			if(e.isCancelled()) return;
+			
+			if(e.isCancelled())
+			{
+				return;
+			}
 		}
 	}
 	
@@ -98,6 +106,11 @@ public class Panel extends Widget
 		for(Widget w : widgets)
 		{
 			w.onMouseScrolled(e);
+			
+			if(e.isCancelled())
+			{
+				return;
+			}
 		}
 	}
 }

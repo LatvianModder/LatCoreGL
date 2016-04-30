@@ -8,7 +8,7 @@ public class EventKeyReleased extends EventKey
 	
 	public EventKeyReleased(IWindow w, int k, long m)
 	{
-		super(w, k);
+		super(w, false, k);
 		millis = m;
 	}
 }

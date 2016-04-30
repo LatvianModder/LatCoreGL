@@ -11,14 +11,10 @@ public class EventKeyPressed extends EventKey
 	
 	public EventKeyPressed(IWindow w, int k, char c, boolean r)
 	{
-		super(w, k);
+		super(w, true, k);
 		keyChar = c;
 		repeat = r;
 	}
-	
-	@Override
-	public boolean canCancel()
-	{ return true; }
 	
 	public boolean isASCIIChar()
 	{ return LMStringUtils.isASCIIChar(keyChar); }
