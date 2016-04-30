@@ -100,6 +100,9 @@ public class LMFrame implements IWindow
 			bufferW.flip();
 			bufferH.flip();
 			
+			GLHelper.clear();
+			GLHelper.background.setI(LMColorUtils.DARK_GRAY);
+			GLHelper.color.setDefault();
 			onRender();
 			textureManager.tickTextures();
 			renderTick++;
@@ -126,10 +129,6 @@ public class LMFrame implements IWindow
 				EventHandler.MAIN.send(new EventResized(this, prevW, prevH));
 				gui.init();
 			}
-			
-			GLHelper.clear();
-			GLHelper.background.setI(LMColorUtils.DARK_GRAY);
-			GLHelper.color.setDefault();
 		}
 		
 		LatCoreGL.logger.info("Stopping Frame...");

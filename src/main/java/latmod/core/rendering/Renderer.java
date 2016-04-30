@@ -23,20 +23,20 @@ public class Renderer // Renderer3D
 	{
 		int w = LatCoreGL.window.getWidth();
 		int h = LatCoreGL.window.getHeight();
+		float ratio = (float) w / (float) h;
 		
 		GL11.glViewport(0, 0, w, h);
-		GLHelper.clear();
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		float ratio = (float) w / (float) h;
 		GL11.glOrtho(-ratio, ratio, -1F, 1F, 1F, -1F);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		
 		GLHelper.depth.disable();
 		GLHelper.cullFace.disable();
-		GLHelper.alphaTest.enable();
+		GLHelper.alphaTest.disable();
 		GLHelper.fog.disable();
+		GLHelper.depthMask.disable();
 		
 		GLHelper.color.setDefault();
 		GLHelper.bound_texture.set(0);
@@ -55,21 +55,6 @@ public class Renderer // Renderer3D
 	{ GL11.glBegin(i); }
 	
 	/**
-	 * -
-	 */
-	public static void beginQuads()
-	{ begin(GL11.GL_QUADS); }
-	
-	public static void beginLines()
-	{ begin(GL11.GL_LINE_STRIP); }
-	
-	public static void beginTriangles()
-	{ begin(GL11.GL_TRIANGLES); }
-	
-	public static void beginPoints()
-	{ begin(GL11.GL_POINTS); }
-	
-	/**
 	 * Draws 2D rectangle. If textures are enabled, then draws textured rect
 	 */
 	public static void rect(double x, double y, double w, double h)
@@ -77,7 +62,7 @@ public class Renderer // Renderer3D
 	
 	public static void rect(double x, double y, double w, double h, double tx, double ty, double tw, double th)
 	{
-		beginQuads();
+		begin(GL11.GL_QUADS);
 		
 		if(GLHelper.texture.enabled)
 		{
