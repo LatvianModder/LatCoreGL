@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+    id 'maven'
+
+    id 'idea'
+    id 'eclipse'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+repositories {
+    mavenCentral()
+}
+
+project.ext.lwjglVersion = "3.0.0"
+
+dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
+    compile "org.lwjgl:lwjgl:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-windows"
+    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-linux"
+    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-osx"
+}
+
+archivesBaseName = "LatCoreGL"
+group = "com.latmod.latcoregl"
+version = "1.0.0"
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+mainClassName = 'com.latmod.latcoregl.Main'
+
+shadowJar {
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    classifier = 'all'
+}
+build.dependsOn(shadowJar)
+
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'latmod.lib.Main'
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.java
+    from sourceSets.main.resources
+    classifier = "sources"
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier = "javadoc"
+}
